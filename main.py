@@ -1,11 +1,10 @@
-from operator import length_hint
 from tkinter import *
 
 class Graph():
   def __init__(self):
       self.length = 0
       self.seperators = [0,self.length]   # |____|____|  [0, 0.4,0.8,2.2,4.7,10]
-      self.forces = {0.4:6} # location:value
+      self.forces = {} # location:value
       self.moments = {} # location:values
       self.outputs = []
   def add_force(self,location,value):
@@ -23,11 +22,20 @@ class Graph():
   def update_forces(self):
     #self.seperators = self.seperators.sort()
     for i in self.seperators:
-        if i == 0 or i == self.length:
-            self.outputs.append(0)
+        if i == 0:
+            ay = 0
+            total = 0
+            for k,v in self.forces.items():
+                total += (k * v)
+        elif i == self.length:
+            by = 0
+            total = 0
+            for k,v in self.forces.items():
+                total += (k * v)
+            by = (total / self.length)
+            self.outputs.append(by)
         else:
             self.outputs.append(self.forces[i] + self.outputs[-1])
-            #test
 
 window = Tk()
 window.geometry('500x500')
@@ -60,6 +68,7 @@ window.after(2000, task)
 
 window.mainloop()
 # testing
+
 
 
 
