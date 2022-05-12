@@ -46,3 +46,4 @@ class Graph():
             print("MATH")
         else:
             self.outputs.append(self.forces[i] + self.outputs[-1])
+            #test
