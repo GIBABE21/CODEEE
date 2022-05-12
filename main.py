@@ -1,5 +1,5 @@
 import tkinter as tk
 window = tk.Tk()
-window.title("Beam Calculator")
+window.title("Determinate Beam Calculator")
 window.mainloop()
 # testing
