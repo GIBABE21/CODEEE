@@ -1,3 +1,4 @@
-# testing
-#3
-print("buy")
+import tkinter as tk
+window = tk.Tk()
+window.title("Beam Calculator")
+window.mainloop()
