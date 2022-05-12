@@ -1,3 +1,4 @@
+from operator import length_hint
 from tkinter import *
 
 window = Tk()
@@ -15,16 +16,17 @@ title.grid(row=0,column=0)
 window.mainloop()
 # testing
 
-graph1 = Graph()
-graph1.add_force(2,5)
+#graph1 = Graph()
+#graph1.add_force(2,5)
 
 
 class Graph():
   def __init__(self):
-      self.seperators = []   # |____|____|  [ 0, 0.4,0.8,2.2,4.7,10]
+      self.seperators = []   # |____|____|  [0, 0.4,0.8,2.2,4.7,10]
       self.forces = {0.4:6} # location:value
       self.length = 0
       self.moments = {} # location:values
+      self.outputs = []
   def add_force(self,value,location):
     if location in self.forces:
       self.forces[location] += value
@@ -39,3 +41,8 @@ class Graph():
       self.seperators.append(location)
   def update_forces(self):
     print('do it here')
+    for i in self.seperators:
+        if i == 0 or i == self.length:
+            print("MATH")
+        else:
+            self.outputs.append(self.forces[i] + self.outputs[-1])
