@@ -70,16 +70,17 @@ def openGraph():
       graph1 = Graph(float(inputtxt.get()), float(left_input.get()), float(right_input.get()))
         #graph1.length = 10
       graph1.add_force(1,2)
+      graph1.add_force(1.5,2)
       graph1.add_force(1.5,3)
       graph1.add_force(4.5,4)
-      graph1.seperators = sorted(graph1.seperators)
+      graph1.seperators = sorted(graph1.seperators) 
       graph1.update_forces()
-      
-      x = graph1.seperators #graph
-      # corresponding y axis values
+      print(graph1.outputs)
+      x = graph1.seperators
       y = graph1.outputs
       # plotting the points 
-      plt.plot(x, y)
+      plt.plot(x, y, color='black', linestyle='solid', linewidth = 3,
+         marker='o', markerfacecolor='red', markersize=5)
       # naming the x axis
       plt.xlabel('x - axis')
       # naming the y axis
