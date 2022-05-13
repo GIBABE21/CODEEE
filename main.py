@@ -61,35 +61,37 @@ class Graph():
 
 
 def openGraph():
-    graph1 = Graph(10, 2, 6)
-        #graph1.length = 10
-    graph1.add_force(1,2)
-    graph1.add_force(1.5,3)
-    graph1.add_force(4.5,4)
-    graph1.seperators = sorted(graph1.seperators)
-    graph1.update_forces()
     global inputtxt
     global left_input
     global right_input
     print(value_inside.get())
     try:
       print(float(left_input.get()),float(right_input.get()),float(inputtxt.get()))
-    except:
-      print("Invalid Inputs") 
-
-    x = graph1.seperators #graph
+      graph1 = Graph(float(inputtxt.get()), float(left_input.get()), float(right_input.get()))
+        #graph1.length = 10
+      graph1.add_force(1,2)
+      graph1.add_force(1.5,3)
+      graph1.add_force(4.5,4)
+      graph1.seperators = sorted(graph1.seperators)
+      graph1.update_forces()
+      
+      x = graph1.seperators #graph
       # corresponding y axis values
-    y = graph1.outputs
-    # plotting the points 
-    plt.plot(x, y)
-    # naming the x axis
-    plt.xlabel('x - axis')
-    # naming the y axis
-    plt.ylabel('y - axis')
-    # giving a title to my graph
-    plt.title('Beam Display')
-    # function to show the plot
-    plt.show()
+      y = graph1.outputs
+      # plotting the points 
+      plt.plot(x, y)
+      # naming the x axis
+      plt.xlabel('x - axis')
+      # naming the y axis
+      plt.ylabel('y - axis')
+      # giving a title to my graph
+      plt.title('Beam Display')
+      # function to show the plot
+      plt.show()
+    except:
+      print("Invalid Inputs, Try again.") 
+
+    
 
 window = Tk()
 window.geometry('500x500')
