@@ -59,38 +59,50 @@ class Graph():
             else:
                 self.outputs.append(self.forces[i] + self.outputs[-1])
 
-
+# 10 2 6
 def openGraph():
     global inputtxt
     global left_input
     global right_input
     print(value_inside.get())
     try:
-      print(float(left_input.get()),float(right_input.get()),float(inputtxt.get()))
+      #print(float(left_input.get()),float(right_input.get()),float(inputtxt.get()))
       graph1 = Graph(float(inputtxt.get()), float(left_input.get()), float(right_input.get()))
-        #graph1.length = 10
       graph1.add_force(3,4)
       graph1.add_force(3.7,6)
       #graph1.add_force(1.5,3)
       graph1.add_force(4.5,4)
       graph1.seperators = sorted(graph1.seperators) 
       graph1.update_forces()
-      print(graph1.outputs)
+
+      # duplicating x for the graph
       x = graph1.seperators
-      y = graph1.outputs
+      x += graph1.seperators
+      x.append(0)
+      x.append(float(inputtxt.get()))
+      x = sorted(x)
+      # duplicating y for the graph
+      y = [0,0]
+      for i,v in enumerate(graph1.outputs):
+        if i < len(graph1.outputs)-1:
+          y.append(v)
+          y.append(v) 
+      y += [0,0]
+      print(x)
+      print(y)
+      
       # plotting the points 
       plt.plot(x, y, color='black', linestyle='solid', linewidth = 3,
          marker='o', markerfacecolor='red', markersize=5)
       # naming the x axis
-      plt.xlabel('x - axis')
+      plt.xlabel('Location ('+value_inside.get()+')')
       # naming the y axis
-      plt.ylabel('y - axis')
+      plt.ylabel('Force')
       # giving a title to my graph
       plt.title('Beam Display')
       # function to show the plot
       plt.show()
-    except:
-      print("Invalid Inputs, Try again.") 
+    except Exception as e: print(e)
 
     
 
