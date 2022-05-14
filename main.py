@@ -25,14 +25,10 @@ class Graph():
       self.moments[location] = value
       self.seperators.append(location)
   def update_forces(self):
-    #print(self.seperators)
     for i in self.seperators:
         if i == self.begin:
             ay = 0
             total = 0
-            #for k,v in self.forces.items():
-                #total += v * (self.length - k)
-            #ay = (total / self.length)
             for k,v in self.forces.items():
                 if self.end - k < 0:
                     total += v * (abs(self.end - k))
@@ -43,9 +39,6 @@ class Graph():
         elif i == self.end:
             by = 0
             total = 0
-            #for k,v in self.forces.items():
-                #total += (k * v)
-            #by = (total / self.length)
             for k,v in self.forces.items():
                 if self.begin - k < 0:
                     total += v * (self.begin - k)
@@ -66,11 +59,9 @@ def openGraph():
     global right_input
     print(value_inside.get())
     try:
-      #print(float(left_input.get()),float(right_input.get()),float(inputtxt.get()))
       graph1 = Graph(float(inputtxt.get()), float(left_input.get()), float(right_input.get()))
       graph1.add_force(3,4)
       graph1.add_force(3.7,6)
-      #graph1.add_force(1.5,3)
       graph1.add_force(4.5,4)
       graph1.seperators = sorted(graph1.seperators) 
       graph1.update_forces()
