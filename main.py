@@ -1,5 +1,8 @@
+from ctypes.wintypes import RGB
 from tkinter import *
+from ttkthemes import ThemedTk,THEMES
 import matplotlib.pyplot as plt
+from numpy import blackman
 
 class Graph():
   def __init__(self, length, begin, end):
@@ -97,21 +100,27 @@ def openGraph():
 
     
 
-window = Tk()
-window.geometry('500x500')
+window = ThemedTk(themebg=True)
+window.set_theme('breeze')
+window.geometry('350x200')
 window.title("Determinate Beam Calculator")
+#window.config(background='black')
 #window.state('zoomed')
 window.resizable(True,True)
+print(THEMES)
+frame = Frame(window)
+frame.pack(side=TOP)
+title = Label(frame,text="Beam Length").grid(row=0,column=1)
+inputtxt = Entry(frame, width = 10)
+inputtxt.grid(row=3,column=1)
+label1 = Label(frame,text="Left Support").grid(row=15,column=0)
+left_input = Entry(frame, width = 10)
+left_input.grid(row=16,column=0)
+label1 = Label(frame,text="Right Support").grid(row=15,column=2)
+right_input = Entry(frame, width = 10)
+right_input.grid(row=16,column=2)
 
-title = Label(window,text="Beam Numbers").grid(row=0,column=2)
-inputtxt = Entry(window, width = 10)
-inputtxt.grid(row=1,column=2)
-left_input = Entry(window, width = 10)#
-left_input.grid(row=4,column=2)
-right_input = Entry(window, width = 10)#
-right_input.grid(row=4,column=5)
-
-button = Button ( window,text="Submit", command=openGraph).grid(row=0,column=7)
+button = Button ( frame,text="Submit", command=openGraph).grid(row=20,column=1)
 
 value_inside = StringVar(window)
   
@@ -119,7 +128,7 @@ value_inside = StringVar(window)
 value_inside.set("in")
 options = ["in", "ft", "m", "mm"]
 
-drop = OptionMenu(window, value_inside, *options).grid(row=2,column=2)
+drop = OptionMenu(frame, value_inside, *options).grid(row=3,column=2)
 
 def task():
     
