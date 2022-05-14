@@ -1,5 +1,6 @@
 from ctypes.wintypes import RGB
 from tkinter import *
+from matplotlib.patches import Rectangle
 from ttkthemes import ThemedTk,THEMES
 import matplotlib.pyplot as plt
 from numpy import blackman
@@ -84,16 +85,28 @@ def openGraph():
       y += [0,0]
       print(x)
       print(y)
-      
-      # plotting the points 
-      plt.plot(x, y, color='black', linestyle='solid', linewidth = 3,
+      fig, axs = plt.subplots(3)
+      fig.suptitle('')
+      axs[0].axes.yaxis.set_visible(False)
+      axs[0].plot([0,float(inputtxt.get())],[0,10],color='gray', linestyle='None', linewidth = 3, markerfacecolor='white', markersize=5)
+      axs[0].set_title('Load Diagram')
+      axs[0].add_patch(Rectangle((0,4),float(inputtxt.get()),2,color = 'grey'))
+      axs[0].arrow(1,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
+      axs[0].arrow(2,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
+      axs[1].plot(x, y, color='black', linestyle='solid', linewidth = 3,
          marker='o', markerfacecolor='red', markersize=5)
-      # naming the x axis
-      plt.xlabel('Location ('+value_inside.get()+')')
-      # naming the y axis
-      plt.ylabel('Force')
-      # giving a title to my graph
-      plt.title('Beam Display')
+      axs[1].set_title("Sheer Diagram")
+      axs[1].set_xlabel('Location ('+value_inside.get()+')')
+      axs[1].set_ylabel('Force')
+      #axs[0].xlabel("x")
+      #axs[0].ylabel("y")
+      axs[2].plot([1,2,3,4], [1,2,3,1], color='gray', linestyle='solid', linewidth = 3,
+         marker='o', markerfacecolor='blue', markersize=5)
+      axs[2].set_title("Moment Diagram")
+      axs[2].set_xlabel('some else ('+value_inside.get()+')')
+      axs[2].set_ylabel('Force')
+      # plotting the points 
+      plt.tight_layout()
       # function to show the plot
       plt.show()
     except Exception as e: print(e)
@@ -101,13 +114,12 @@ def openGraph():
     
 
 window = ThemedTk(themebg=True)
-window.set_theme('breeze')
+window.set_theme('black')
 window.geometry('350x200')
 window.title("Determinate Beam Calculator")
 #window.config(background='black')
 #window.state('zoomed')
 window.resizable(True,True)
-print(THEMES)
 frame = Frame(window)
 frame.pack(side=TOP)
 title = Label(frame,text="Beam Length").grid(row=0,column=1)
