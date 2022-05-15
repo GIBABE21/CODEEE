@@ -33,23 +33,29 @@ class Graph():
         if i == self.begin:
             ay = 0
             total = 0
+            jump = 0
             for k,v in self.forces.items():
                 if self.end - k < 0:
                     total += v * (abs(self.end - k))
                 else:
                     total -= v * (self.end - k)
             ay = (total / (self.end - self.begin))
-            self.outputs.append(ay)
+            #print(ay)
+            jump = self.outputs[-1] + ay
+            self.outputs.append(jump)
         elif i == self.end:
             by = 0
             total = 0
+            jump = 0
             for k,v in self.forces.items():
                 if self.begin - k < 0:
-                    total += v * (self.begin - k)
-                else:
                     total -= v * (abs(self.begin - k))
+                else:
+                    total += v * (self.begin - k)
             by = (total / (self.end - self.begin))
-            self.outputs.append(by)
+            #print(by)
+            jump = self.outputs[-1] + by
+            self.outputs.append(jump)
         else:
             if len(self.outputs) == 0:
                 self.outputs.append(self.forces[i])
@@ -64,9 +70,11 @@ def openGraph():
     print(value_inside.get())
     try:
       graph1 = Graph(float(inputtxt.get()), float(left_input.get()), float(right_input.get()))
-      graph1.add_force(3,4)
-      graph1.add_force(3.7,6)
+      graph1.add_force(1,4)
+      graph1.add_force(2,6)
       graph1.add_force(4.5,4)
+      graph1.add_force(8,10)
+      graph1.add_force(9.5,1)
       graph1.seperators = sorted(graph1.seperators) 
       graph1.update_forces()
 
