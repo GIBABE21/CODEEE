@@ -95,12 +95,14 @@ def openGraph():
       axs[0].arrow(2,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
       axs[1].plot(x, y, color='black', linestyle='solid', linewidth = 3,
          marker='o', markerfacecolor='red', markersize=5)
+      for i, j in zip(x, y):
+        axs[1].text(i, j+0.5, str(round(j,2)))
       axs[1].set_title("Sheer Diagram")
       axs[1].set_xlabel('Location ('+value_inside.get()+')')
       axs[1].set_ylabel('Force')
       #axs[0].xlabel("x")
       #axs[0].ylabel("y")
-      axs[2].plot([1,2,3,4], [1,2,3,1], color='gray', linestyle='solid', linewidth = 3,
+      axs[2].plot([1,2,3,10], [1,2,3,1], color='gray', linestyle='solid', linewidth = 3,
          marker='o', markerfacecolor='blue', markersize=5)
       axs[2].set_title("Moment Diagram")
       axs[2].set_xlabel('some else ('+value_inside.get()+')')
