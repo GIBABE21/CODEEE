@@ -1,5 +1,6 @@
 from ctypes.wintypes import RGB
 from tkinter import *
+from tkinter import messagebox
 from matplotlib.patches import Rectangle
 from ttkthemes import ThemedTk,THEMES
 import matplotlib.pyplot as plt
@@ -41,8 +42,11 @@ class Graph():
                     total -= v * (self.end - k)
             ay = (total / (self.end - self.begin))
             #print(ay)
-            jump = self.outputs[-1] + ay
-            self.outputs.append(jump)
+            if len(self.outputs) > 0:
+              jump = self.outputs[-1] + ay
+              self.outputs.append(jump)
+            else:
+              self.outputs.append(ay)
         elif i == self.end:
             by = 0
             total = 0
@@ -54,8 +58,11 @@ class Graph():
                     total += v * (self.begin - k)
             by = (total / (self.end - self.begin))
             #print(by)
-            jump = self.outputs[-1] + by
-            self.outputs.append(jump)
+            if len(self.outputs) > 0:
+              jump = self.outputs[-1] + by
+              self.outputs.append(jump)
+            else:
+              self.outputs.append(ay)
         else:
             if len(self.outputs) == 0:
                 self.outputs.append(self.forces[i])
@@ -64,64 +71,73 @@ class Graph():
 
 # 10 2 6
 def openGraph():
-    global inputtxt
+    global length_input
     global left_input
     global right_input
     print(value_inside.get())
     try:
-      graph1 = Graph(float(inputtxt.get()), float(left_input.get()), float(right_input.get()))
-      graph1.add_force(1,4)
-      graph1.add_force(2,6)
-      graph1.add_force(4.5,4)
-      graph1.add_force(8,10)
-      graph1.add_force(9.5,1)
-      graph1.seperators = sorted(graph1.seperators) 
-      graph1.update_forces()
+      graph1 = Graph(float(length_input.get()), float(left_input.get()), float(right_input.get()))
+    except:
+      messagebox.showerror('Type Error', 'Error: Input values are not real numbers.')
+    else:
+      if float(length_input.get()) < 0 or float(left_input.get()) < 0 or float(right_input.get()) < 0:
+        messagebox.showerror('Sign Error', 'Error: Input values cannot be negative numbers')
+      elif float(left_input.get()) >= float(right_input.get()):
+        messagebox.showerror('Supports Error', 'Error: Left support cannot be greater than or equal to the right one.')
+      elif float(right_input.get()) > float(length_input.get()):
+        messagebox.showerror('Supports/Length Mismatch', 'Error: Right support cannot be greater than the length of beam.')
+      elif float(length_input.get()) == 0:
+        messagebox.showerror('Length Error', 'Error: Length of beam cannot be zero.')
+      else:
+        graph1.add_force(1,4)
+        graph1.add_force(2,6)
+        graph1.add_force(4.5,4)
+        graph1.add_force(8,10)
+        graph1.add_force(9.5,1)
+        graph1.seperators = sorted(graph1.seperators) 
+        graph1.update_forces()
 
-      # duplicating x for the graph
-      x = graph1.seperators
-      x += graph1.seperators
-      x.append(0)
-      x.append(float(inputtxt.get()))
-      x = sorted(x)
-      # duplicating y for the graph
-      y = [0,0]
-      for i,v in enumerate(graph1.outputs):
-        if i < len(graph1.outputs)-1:
-          y.append(v)
-          y.append(v) 
-      y += [0,0]
-      print(x)
-      print(y)
-      fig, axs = plt.subplots(3)
-      fig.suptitle('')
-      axs[0].axes.yaxis.set_visible(False)
-      axs[0].plot([0,float(inputtxt.get())],[0,10],color='gray', linestyle='None', linewidth = 3, markerfacecolor='white', markersize=5)
-      axs[0].set_title('Load Diagram')
-      axs[0].add_patch(Rectangle((0,4),float(inputtxt.get()),2,color = 'grey'))
-      axs[0].arrow(1,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
-      axs[0].arrow(2,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
-      axs[1].plot(x, y, color='black', linestyle='solid', linewidth = 3,
-         marker='o', markerfacecolor='red', markersize=5)
-      for i, j in zip(x, y):
-        axs[1].text(i, j+0.5, str(round(j,2)))
-      axs[1].set_title("Sheer Diagram")
-      axs[1].set_xlabel('Location ('+value_inside.get()+')')
-      axs[1].set_ylabel('Force')
-      #axs[0].xlabel("x")
-      #axs[0].ylabel("y")
-      axs[2].plot([1,2,3,10], [1,2,3,1], color='gray', linestyle='solid', linewidth = 3,
-         marker='o', markerfacecolor='blue', markersize=5)
-      axs[2].set_title("Moment Diagram")
-      axs[2].set_xlabel('some else ('+value_inside.get()+')')
-      axs[2].set_ylabel('Force')
-      # plotting the points 
-      plt.tight_layout()
-      # function to show the plot
-      plt.show()
-    except Exception as e: print(e)
-
-    
+        # duplicating x for the graph
+        x = graph1.seperators
+        x += graph1.seperators
+        x.append(0)
+        x.append(float(length_input.get()))
+        x = sorted(x)
+        # duplicating y for the graph
+        y = [0,0]
+        for i,v in enumerate(graph1.outputs):
+          if i < len(graph1.outputs)-1:
+            y.append(v)
+            y.append(v) 
+        y += [0,0]
+        print(x)
+        print(y)
+        fig, axs = plt.subplots(3)
+        fig.suptitle('')
+        axs[0].axes.yaxis.set_visible(False)
+        axs[0].plot([0,float(length_input.get())],[0,10],color='gray', linestyle='None', linewidth = 3, markerfacecolor='white', markersize=5)
+        axs[0].set_title('Load Diagram')
+        axs[0].add_patch(Rectangle((0,4),float(length_input.get()),2,color = 'grey'))
+        axs[0].arrow(1,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
+        axs[0].arrow(2,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
+        axs[1].plot(x, y, color='black', linestyle='solid', linewidth = 3,
+           marker='o', markerfacecolor='red', markersize=5)
+        for i, j in zip(x, y):
+          axs[1].text(i, j+0.5, str(round(j,2)))
+        axs[1].set_title("Sheer Diagram")
+        axs[1].set_xlabel('Location ('+value_inside.get()+')')
+        axs[1].set_ylabel('Force')
+        #axs[0].xlabel("x")
+        #axs[0].ylabel("y")
+        axs[2].plot([1,2,3,10], [1,2,3,1], color='gray', linestyle='solid', linewidth = 3,
+           marker='o', markerfacecolor='blue', markersize=5)
+        axs[2].set_title("Moment Diagram")
+        axs[2].set_xlabel('some else ('+value_inside.get()+')')
+        axs[2].set_ylabel('Force')
+        # plotting the points 
+        plt.tight_layout()
+        # function to show the plot
+        plt.show()
 
 window = ThemedTk(themebg=True)
 window.set_theme('black')
@@ -133,8 +149,8 @@ window.resizable(True,True)
 frame = Frame(window)
 frame.pack(side=TOP)
 title = Label(frame,text="Beam Length").grid(row=0,column=1)
-inputtxt = Entry(frame, width = 10)
-inputtxt.grid(row=3,column=1)
+length_input = Entry(frame, width = 10)
+length_input.grid(row=3,column=1)
 label1 = Label(frame,text="Left Support").grid(row=15,column=0)
 left_input = Entry(frame, width = 10)
 left_input.grid(row=16,column=0)
