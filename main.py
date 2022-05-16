@@ -1,10 +1,10 @@
 from ctypes.wintypes import RGB
 from tkinter import *
 from tkinter import messagebox
+import customtkinter
 from matplotlib.patches import Rectangle
-from ttkthemes import ThemedTk,THEMES
 import matplotlib.pyplot as plt
-from numpy import blackman
+
 
 class Graph():
   def __init__(self, length, begin, end):
@@ -139,26 +139,28 @@ def openGraph():
         # function to show the plot
         plt.show()
 
-window = ThemedTk(themebg=True)
-window.set_theme('black')
-window.geometry('350x200')
+customtkinter.set_appearance_mode("System")
+customtkinter.set_default_color_theme("blue")
+
+window = customtkinter.CTk()
+window.geometry('400x200')
 window.title("Determinate Beam Calculator")
 #window.config(background='black')
 #window.state('zoomed')
 window.resizable(True,True)
-frame = Frame(window)
+frame = customtkinter.CTkFrame(master=window,width=200,height=200,corner_radius=10)
 frame.pack(side=TOP)
-title = Label(frame,text="Beam Length").grid(row=0,column=1)
-length_input = Entry(frame, width = 10)
-length_input.grid(row=3,column=1)
-label1 = Label(frame,text="Left Support").grid(row=15,column=0)
-left_input = Entry(frame, width = 10)
+title = customtkinter.CTkLabel(frame,text="Beam Length").grid(row=0,column=0)
+length_input = customtkinter.CTkEntry(master=frame, placeholder_text = "0.0")
+length_input.grid(row=3,column=0)
+label1 = customtkinter.CTkLabel(frame,text="Left Support").grid(row=15,column=0)
+left_input = customtkinter.CTkEntry(frame, placeholder_text = "0.0")
 left_input.grid(row=16,column=0)
-label1 = Label(frame,text="Right Support").grid(row=15,column=2)
-right_input = Entry(frame, width = 10)
+label1 = customtkinter.CTkLabel(frame,text="Right Support").grid(row=15,column=2)
+right_input = customtkinter.CTkEntry(frame, placeholder_text = "0.0")
 right_input.grid(row=16,column=2)
 
-button = Button ( frame,text="Submit", command=openGraph).grid(row=20,column=1)
+button = customtkinter.CTkButton(master=frame,text="Submit", command=openGraph).grid(row=20,column=1)
 
 value_inside = StringVar(window)
   
@@ -166,14 +168,17 @@ value_inside = StringVar(window)
 value_inside.set("in")
 options = ["in", "ft", "m", "mm"]
 
-drop = OptionMenu(frame, value_inside, *options).grid(row=3,column=2)
+options_frame = customtkinter.CTkFrame(frame,width=150,height=30,corner_radius=0)
+options_frame.grid(row=3,column=1)
 
-def task():
+#drop = OptionMenu(frame, value_inside, *options).grid(row=3,column=2)
+
+#def task():
     
     #print(graph1.outputs)
-    window.after(1000, task)  # reschedule event in 2 seconds
+#   window.after(1000, task)  # reschedule event in 2 seconds
 
-window.after(2000, task)
+#window.after(2000, task)
 
 
 
