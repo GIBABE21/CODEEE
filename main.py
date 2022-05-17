@@ -4,6 +4,8 @@ import tkinter
 import customtkinter
 from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
+import cv2
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 
 class Graph():
@@ -17,18 +19,18 @@ class Graph():
       self.outputs = []
       self.begin = begin
       self.end = end
-
+  # adding force to a dictionary as a key:value pair being location:value
   def add_force(self, location, value):
     if location in self.forces:
       self.forces[location] += value
     else:
       self.forces[location] = value
       self.seperators.append(location)
-
+  # adding evenly distributed load
   def add_bi_load(self, location1, location2, value):
       self.add_force(location1, value)
       self.add_force(location2, value)
-
+  # adding an increasing/decreasing distributed load
   def add_tri_load(self, location1, location2, value1, value2):
       self.add_force(location1, value1)
       self.add_force(location2, value2)
@@ -39,7 +41,7 @@ class Graph():
     else:
       self.moments[location] = value
       self.seperators.append(location)
-
+  # goes through all the forces and returns outputs that are used to display the middle graph
   def update_forces(self):
     for i in self.seperators:
         if i == self.begin:
@@ -86,10 +88,12 @@ def openGraph():
     global left_input
     global right_input
     try:
+      # using input values for graph class
       graph1 = Graph(float(length_input.get()), float(left_input.get()), float(right_input.get()))
     except:
       messagebox.showerror('Type Error', 'Error: Input values are not real numbers.')
     else:
+      # all possible invalid input errors
       if float(length_input.get()) < 0 or float(left_input.get()) < 0 or float(right_input.get()) < 0:
         messagebox.showerror('Sign Error', 'Error: Input values cannot be negative numbers')
       elif float(left_input.get()) >= float(right_input.get()):
@@ -125,6 +129,9 @@ def openGraph():
         print(x)
         print(y)
         plt.style.use('dark_background')
+        # 3 graphs with matplotlib in the same window
+        
+#C:\Users\Fetma\OneDrive\Desktop\BeamCalculator\BeamCalcululator\img\Bside.png
         fig, axs = plt.subplots(3,figsize=(12, 8))
         fig.suptitle('')
         axs[0].axes.yaxis.set_visible(False)
@@ -133,6 +140,14 @@ def openGraph():
         axs[0].add_patch(Rectangle((0,4),float(length_input.get()),2,color = 'grey'))
         axs[0].arrow(1,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
         axs[0].arrow(2,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
+        img1 = cv2.imread('Aside.png')
+        print('hi',axs)
+        #im = OffsetImage(img1,zoom=1)
+        #a1 = AnnotationBbox(im,(float(left_input.get()),3),frameon=False)
+        
+        #axs[0].add_artist(a1)
+        #img1 = cv2.resize(img1,(5,5),interpolation=cv2.INTER_LINEAR)
+        #imgplot = axs[0].imshow(cv2.cvtColor(img1,cv2.COLOR_BGR2RGB))
         axs[1].plot(x, y, color='gray', linestyle='solid', linewidth = 3,
            marker='o', markerfacecolor='blue', markersize=5)
         for i, j in zip(x, y):
@@ -140,8 +155,6 @@ def openGraph():
         axs[1].set_title("Sheer Diagram")
         axs[1].set_xlabel('Location ('+options[current_unit.get()]+')')
         axs[1].set_ylabel('Force')
-        #axs[0].xlabel("x")
-        #axs[0].ylabel("y")
         axs[2].plot([1,2,3,10], [1,2,3,1], color='gray', linestyle='solid', linewidth = 3,
            marker='o', markerfacecolor='blue', markersize=5)
         axs[2].set_title("Moment Diagram")
@@ -151,7 +164,7 @@ def openGraph():
         plt.tight_layout()
         # function to show the plot
         plt.show()
-
+# function used to switch between radio buttons and edit the current_unit variable
 def switch_unit():
   print("toggled to ", current_unit.get())
 customtkinter.set_appearance_mode("System")
@@ -180,10 +193,8 @@ right_input.grid(row=16,column=2)
 
 button = customtkinter.CTkButton(master=frame,text="Submit", command=openGraph).grid(row=20,column=1)
 current_unit = tkinter.IntVar(0)
-#current_unit = StringVar(window)
   
 # Set the default value of the variable
-#current_unit.set("in")
 options = ["in", "ft", "m", "mm"]
 options_frame = customtkinter.CTkFrame(frame,width=100,height=30,corner_radius=0)
 options_frame.grid(row=3,column=1)
@@ -192,8 +203,6 @@ option2 = customtkinter.CTkRadioButton(options_frame,text="ft",command=switch_un
 option3 = customtkinter.CTkRadioButton(options_frame,text="m",command=switch_unit, variable= current_unit, value=2).grid(row=0,column=2,padx=10)
 option4 = customtkinter.CTkRadioButton(options_frame,text="mm",command=switch_unit, variable= current_unit, value=3).grid(row=0,column=3,padx=10)
 
-
-#drop = OptionMenu(frame, current_unit, *options).grid(row=3,column=2)
 
 #def task():
     
