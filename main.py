@@ -17,18 +17,29 @@ class Graph():
       self.outputs = []
       self.begin = begin
       self.end = end
+
   def add_force(self, location, value):
     if location in self.forces:
       self.forces[location] += value
     else:
       self.forces[location] = value
       self.seperators.append(location)
+
+  def add_bi_load(self, location1, location2, value):
+      self.add_force(location1, value)
+      self.add_force(location2, value)
+
+  def add_tri_load(self, location1, location2, value1, value2):
+      self.add_force(location1, value1)
+      self.add_force(location2, value2)
+
   def add_moment(self, location, value):
     if location in self.moments:
       self.moments[location] += value
     else:
       self.moments[location] = value
       self.seperators.append(location)
+
   def update_forces(self):
     for i in self.seperators:
         if i == self.begin:
@@ -93,6 +104,8 @@ def openGraph():
         graph1.add_force(4.5,4)
         graph1.add_force(8,10)
         graph1.add_force(9.5,1)
+        graph1.add_bi_load(0.5,1.5,2)
+        graph1.add_tri_load(3.5,4.5,2,1)
         graph1.seperators = sorted(graph1.seperators) 
         graph1.update_forces()
 
