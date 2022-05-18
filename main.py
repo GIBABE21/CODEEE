@@ -1,6 +1,6 @@
+from ctypes.wintypes import RGB
 from tkinter import *
 from tkinter import messagebox
-import tkinter
 import customtkinter
 from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
@@ -17,6 +17,8 @@ class Graph():
       self.outputs = []
       self.begin = begin
       self.end = end
+      self.ay = 0
+      self.by = 0
 
   def add_force(self, location, value):
     if location in self.forces:
@@ -26,12 +28,27 @@ class Graph():
       self.seperators.append(location)
 
   def add_bi_load(self, location1, location2, value):
-      self.add_force(location1, value)
-      self.add_force(location2, value)
+      midpoint = (1 / 2) * (location1 + location2)
+      #print(midpoint)
+      bi_value = value * (location2 - location1)
+      #print(bi_value)
+      #self.add_force(location1, value)
+      #self.add_force(location2, value)
+      self.add_force(midpoint, bi_value)
 
   def add_tri_load(self, location1, location2, value1, value2):
-      self.add_force(location1, value1)
-      self.add_force(location2, value2)
+      midpoint = (1 / 2) * (location1 + location2)
+      #print(midpoint)
+      bi_value = value1 * (location2 - location1)
+      #print(bi_value)
+      self.add_force(midpoint, bi_value)
+      midpoint = (2 / 3) * (location2 - location1) + location1
+      #print(midpoint)
+      tri_value = (1 / 2) * (location2 - location1) * (value2 - value1)
+      #print(tri_value)
+      self.add_force(midpoint, tri_value)
+      #self.add_force(location1, value1)
+      #self.add_force(location2, value2)
 
   def add_moment(self, location, value):
     if location in self.moments:
@@ -43,7 +60,7 @@ class Graph():
   def update_forces(self):
     for i in self.seperators:
         if i == self.begin:
-            ay = 0
+            #ay = 0
             total = 0
             jump = 0
             for k,v in self.forces.items():
@@ -51,15 +68,19 @@ class Graph():
                     total += v * (abs(self.end - k))
                 else:
                     total -= v * (self.end - k)
-            ay = (total / (self.end - self.begin))
+            #ay = (total / (self.end - self.begin))
+            self.ay = (total / (self.end - self.begin))
+            print(self.ay)
             #print(ay)
             if len(self.outputs) > 0:
-              jump = self.outputs[-1] + ay
+              #jump = self.outputs[-1] + ay
+              jump = self.outputs[-1] + self.ay
               self.outputs.append(jump)
             else:
-              self.outputs.append(ay)
+              #self.outputs.append(ay)
+              self.outputs.append(self.ay)
         elif i == self.end:
-            by = 0
+            #by = 0
             total = 0
             jump = 0
             for k,v in self.forces.items():
@@ -67,13 +88,17 @@ class Graph():
                     total -= v * (abs(self.begin - k))
                 else:
                     total += v * (self.begin - k)
-            by = (total / (self.end - self.begin))
+            #by = (total / (self.end - self.begin))
+            self.by = (total / (self.end - self.begin))
+            print(self.by)
             #print(by)
             if len(self.outputs) > 0:
-              jump = self.outputs[-1] + by
+              #jump = self.outputs[-1] + by
+              jump = self.outputs[-1] + self.by
               self.outputs.append(jump)
             else:
-              self.outputs.append(ay)
+              #self.outputs.append(ay)
+              self.outputs.append(self.ay)
         else:
             if len(self.outputs) == 0:
                 self.outputs.append(self.forces[i])
@@ -85,6 +110,7 @@ def openGraph():
     global length_input
     global left_input
     global right_input
+    #print(value_inside.get())
     try:
       graph1 = Graph(float(length_input.get()), float(left_input.get()), float(right_input.get()))
     except:
@@ -104,8 +130,10 @@ def openGraph():
         graph1.add_force(4.5,4)
         graph1.add_force(8,10)
         graph1.add_force(9.5,1)
-        graph1.add_bi_load(0.5,1.5,2)
-        graph1.add_tri_load(3.5,4.5,2,1)
+        graph1.add_bi_load(1,4,6)
+        #graph1.add_force(2.5,18)
+        graph1.add_tri_load(2,4,1,2)
+        #graph1.add_tri_load(3.5,4.5,2,1)
         graph1.seperators = sorted(graph1.seperators) 
         graph1.update_forces()
 
@@ -124,8 +152,7 @@ def openGraph():
         y += [0,0]
         print(x)
         print(y)
-        plt.style.use('dark_background')
-        fig, axs = plt.subplots(3,figsize=(12, 8))
+        fig, axs = plt.subplots(3)
         fig.suptitle('')
         axs[0].axes.yaxis.set_visible(False)
         axs[0].plot([0,float(length_input.get())],[0,10],color='gray', linestyle='None', linewidth = 3, markerfacecolor='white', markersize=5)
@@ -133,41 +160,36 @@ def openGraph():
         axs[0].add_patch(Rectangle((0,4),float(length_input.get()),2,color = 'grey'))
         axs[0].arrow(1,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
         axs[0].arrow(2,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
-        axs[1].plot(x, y, color='gray', linestyle='solid', linewidth = 3,
-           marker='o', markerfacecolor='blue', markersize=5)
+        axs[1].plot(x, y, color='black', linestyle='solid', linewidth = 3,
+           marker='o', markerfacecolor='red', markersize=5)
         for i, j in zip(x, y):
           axs[1].text(i, j+0.5, str(round(j,2)))
         axs[1].set_title("Sheer Diagram")
-        axs[1].set_xlabel('Location ('+options[current_unit.get()]+')')
+        axs[1].set_xlabel('Location ('+value_inside.get()+')')
         axs[1].set_ylabel('Force')
         #axs[0].xlabel("x")
         #axs[0].ylabel("y")
         axs[2].plot([1,2,3,10], [1,2,3,1], color='gray', linestyle='solid', linewidth = 3,
            marker='o', markerfacecolor='blue', markersize=5)
         axs[2].set_title("Moment Diagram")
-        axs[2].set_xlabel('some else ('+options[current_unit.get()]+')')
+        axs[2].set_xlabel('some else ('+value_inside.get()+')')
         axs[2].set_ylabel('Force')
         # plotting the points 
         plt.tight_layout()
         # function to show the plot
         plt.show()
 
-def switch_unit():
-  print("toggled to ", current_unit.get())
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
 
 window = customtkinter.CTk()
-   
-window.geometry('500x200')
+window.geometry('400x200')
 window.title("Determinate Beam Calculator")
 #window.config(background='black')
 #window.state('zoomed')
 window.resizable(True,True)
 frame = customtkinter.CTkFrame(master=window,width=200,height=200,corner_radius=10)
 frame.pack(side=TOP)
-frame.columnconfigure(0, weight=3)
-frame.columnconfigure(1, weight=1)
 title = customtkinter.CTkLabel(frame,text="Beam Length").grid(row=0,column=0)
 length_input = customtkinter.CTkEntry(master=frame, placeholder_text = "0.0")
 length_input.grid(row=3,column=0)
@@ -179,21 +201,17 @@ right_input = customtkinter.CTkEntry(frame, placeholder_text = "0.0")
 right_input.grid(row=16,column=2)
 
 button = customtkinter.CTkButton(master=frame,text="Submit", command=openGraph).grid(row=20,column=1)
-current_unit = tkinter.IntVar(0)
-#current_unit = StringVar(window)
+
+value_inside = StringVar(window)
   
 # Set the default value of the variable
-#current_unit.set("in")
+value_inside.set("in")
 options = ["in", "ft", "m", "mm"]
-options_frame = customtkinter.CTkFrame(frame,width=100,height=30,corner_radius=0)
+
+options_frame = customtkinter.CTkFrame(frame,width=150,height=30,corner_radius=0)
 options_frame.grid(row=3,column=1)
-option1 = customtkinter.CTkRadioButton(options_frame,text="in",command=switch_unit, variable= current_unit, value=0).grid(row=0,column=0,padx=10)
-option2 = customtkinter.CTkRadioButton(options_frame,text="ft",command=switch_unit, variable= current_unit, value=1).grid(row=0,column=1,padx=10)
-option3 = customtkinter.CTkRadioButton(options_frame,text="m",command=switch_unit, variable= current_unit, value=2).grid(row=0,column=2,padx=10)
-option4 = customtkinter.CTkRadioButton(options_frame,text="mm",command=switch_unit, variable= current_unit, value=3).grid(row=0,column=3,padx=10)
 
-
-#drop = OptionMenu(frame, current_unit, *options).grid(row=3,column=2)
+#drop = OptionMenu(frame, value_inside, *options).grid(row=3,column=2)
 
 #def task():
     
