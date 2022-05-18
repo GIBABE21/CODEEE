@@ -1,6 +1,7 @@
 from ctypes.wintypes import RGB
 from tkinter import *
 from tkinter import messagebox
+import tkinter
 import customtkinter
 from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
@@ -19,13 +20,9 @@ class Graph():
       self.outputs = []
       self.begin = begin
       self.end = end
-<<<<<<< HEAD
       self.ay = 0
       self.by = 0
-
-=======
   # adding force to a dictionary as a key:value pair being location:value
->>>>>>> b22954030d7d2013f973fc0de9db52f76b8b6001
   def add_force(self, location, value):
     if location in self.forces:
       self.forces[location] += value
@@ -34,7 +31,6 @@ class Graph():
       self.seperators.append(location)
   # adding evenly distributed load
   def add_bi_load(self, location1, location2, value):
-<<<<<<< HEAD
       midpoint = (1 / 2) * (location1 + location2)
       #print(midpoint)
       bi_value = value * (location2 - location1)
@@ -42,12 +38,7 @@ class Graph():
       #self.add_force(location1, value)
       #self.add_force(location2, value)
       self.add_force(midpoint, bi_value)
-
-=======
-      self.add_force(location1, value)
-      self.add_force(location2, value)
-  # adding an increasing/decreasing distributed load
->>>>>>> b22954030d7d2013f973fc0de9db52f76b8b6001
+ # adding an increasing/decreasing distributed load
   def add_tri_load(self, location1, location2, value1, value2):
       midpoint = (1 / 2) * (location1 + location2)
       #print(midpoint)
@@ -69,6 +60,7 @@ class Graph():
       self.moments[location] = value
       self.seperators.append(location)
   # goes through all the forces and returns outputs that are used to display the middle graph
+  
   def update_forces(self):
     for i in self.seperators:
         if i == self.begin:
@@ -166,15 +158,9 @@ def openGraph():
         y += [0,0]
         print(x)
         print(y)
-<<<<<<< HEAD
-        fig, axs = plt.subplots(3)
-=======
         plt.style.use('dark_background')
         # 3 graphs with matplotlib in the same window
-        
-#C:\Users\Fetma\OneDrive\Desktop\BeamCalculator\BeamCalcululator\img\Bside.png
         fig, axs = plt.subplots(3,figsize=(12, 8))
->>>>>>> b22954030d7d2013f973fc0de9db52f76b8b6001
         fig.suptitle('')
         axs[0].axes.yaxis.set_visible(False)
         axs[0].plot([0,float(length_input.get())],[0,10],color='gray', linestyle='None', linewidth = 3, markerfacecolor='white', markersize=5)
@@ -182,10 +168,6 @@ def openGraph():
         axs[0].add_patch(Rectangle((0,4),float(length_input.get()),2,color = 'grey'))
         axs[0].arrow(1,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
         axs[0].arrow(2,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
-<<<<<<< HEAD
-        axs[1].plot(x, y, color='black', linestyle='solid', linewidth = 3,
-           marker='o', markerfacecolor='red', markersize=5)
-=======
         img1 = cv2.imread('Aside.png')
         print('hi',axs)
         #im = OffsetImage(img1,zoom=1)
@@ -196,33 +178,23 @@ def openGraph():
         #imgplot = axs[0].imshow(cv2.cvtColor(img1,cv2.COLOR_BGR2RGB))
         axs[1].plot(x, y, color='gray', linestyle='solid', linewidth = 3,
            marker='o', markerfacecolor='blue', markersize=5)
->>>>>>> b22954030d7d2013f973fc0de9db52f76b8b6001
         for i, j in zip(x, y):
           axs[1].text(i, j+0.5, str(round(j,2)))
         axs[1].set_title("Sheer Diagram")
-        axs[1].set_xlabel('Location ('+value_inside.get()+')')
+        axs[1].set_xlabel('Location ('+options[current_unit.get()]+')')
         axs[1].set_ylabel('Force')
-        axs[2].plot([1,2,3,10], [1,2,3,1], color='gray', linestyle='solid', linewidth = 3,
-           marker='o', markerfacecolor='blue', markersize=5)
-        axs[2].set_title("Moment Diagram")
-        axs[2].set_xlabel('some else ('+value_inside.get()+')')
-        axs[2].set_ylabel('Force')
         # plotting the points 
         plt.tight_layout()
         # function to show the plot
         plt.show()
-<<<<<<< HEAD
-
-=======
 # function used to switch between radio buttons and edit the current_unit variable
 def switch_unit():
   print("toggled to ", current_unit.get())
->>>>>>> b22954030d7d2013f973fc0de9db52f76b8b6001
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
 
 window = customtkinter.CTk()
-window.geometry('400x200')
+window.geometry('500x200')
 window.title("Determinate Beam Calculator")
 #window.config(background='black')
 #window.state('zoomed')
@@ -240,27 +212,18 @@ right_input = customtkinter.CTkEntry(frame, placeholder_text = "0.0")
 right_input.grid(row=16,column=2)
 
 button = customtkinter.CTkButton(master=frame,text="Submit", command=openGraph).grid(row=20,column=1)
-<<<<<<< HEAD
-
-value_inside = StringVar(window)
-  
-# Set the default value of the variable
-value_inside.set("in")
-=======
 current_unit = tkinter.IntVar(0)
+#current_unit = StringVar(window)
   
 # Set the default value of the variable
->>>>>>> b22954030d7d2013f973fc0de9db52f76b8b6001
+#current_unit.set("in")
 options = ["in", "ft", "m", "mm"]
-
-options_frame = customtkinter.CTkFrame(frame,width=150,height=30,corner_radius=0)
+options_frame = customtkinter.CTkFrame(frame,width=100,height=30,corner_radius=0)
 options_frame.grid(row=3,column=1)
-
-<<<<<<< HEAD
-#drop = OptionMenu(frame, value_inside, *options).grid(row=3,column=2)
-=======
->>>>>>> b22954030d7d2013f973fc0de9db52f76b8b6001
-
+option1 = customtkinter.CTkRadioButton(options_frame,text="in",command=switch_unit, variable= current_unit, value=0).grid(row=0,column=0,padx=10)
+option2 = customtkinter.CTkRadioButton(options_frame,text="ft",command=switch_unit, variable= current_unit, value=1).grid(row=0,column=1,padx=10)
+option3 = customtkinter.CTkRadioButton(options_frame,text="m",command=switch_unit, variable= current_unit, value=2).grid(row=0,column=2,padx=10)
+option4 = customtkinter.CTkRadioButton(options_frame,text="mm",command=switch_unit, variable= current_unit, value=3).grid(row=0,column=3,padx=10)
 #def task():
     
     #print(graph1.outputs)
