@@ -212,7 +212,7 @@ right_input = customtkinter.CTkEntry(frame, placeholder_text = "0.0")
 right_input.grid(row=16,column=2)
 
 button = customtkinter.CTkButton(master=frame,text="Submit", command=openGraph).grid(row=20,column=1)
-current_unit = tkinter.IntVar(0)
+current_unit = tkinter.IntVar(value = 0)
 #current_unit = StringVar(window)
   
 # Set the default value of the variable
