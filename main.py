@@ -108,7 +108,8 @@ class Graph():
                 self.outputs.append(self.forces[i])
             else:
                 self.outputs.append(self.forces[i] + self.outputs[-1])
-
+def newForce():
+  print('new force')
 # 10 2 6
 def openGraph():
     global length_input
@@ -131,6 +132,23 @@ def openGraph():
       elif float(length_input.get()) == 0:
         messagebox.showerror('Length Error', 'Error: Length of beam cannot be zero.')
       else:
+        global button1
+        global button2
+        global button3 
+        global button4
+        global button5
+        global button6
+        global button7 
+        global button8
+        button1 = customtkinter.CTkButton(master=frame,text="Concetrated Load Up", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=25,column=0,pady=(20,10))
+        button2 = customtkinter.CTkButton(master=frame,text="Concetrated Load Down", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=26,column=0,pady=(20,10))
+        button3 = customtkinter.CTkButton(master=frame,text="Uniform Load Up", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=27,column=0,pady=(20,10))
+        button4 = customtkinter.CTkButton(master=frame,text="Uniform Load Down", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=28,column=0,pady=(20,10))
+        button5 = customtkinter.CTkButton(master=frame,text="Linear Load Up", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=29,column=0,pady=(20,10))
+        button6 = customtkinter.CTkButton(master=frame,text="Linear Load Down", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=30,column=0,pady=(20,10))
+        button7 = customtkinter.CTkButton(master=frame,text="Concetrated Moment CCW", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=31,column=0,pady=(20,10))
+        button8 = customtkinter.CTkButton(master=frame,text="Concetrated Moment CCW", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=32,column=0,pady=(20,10))
+        print(button1)
         graph1.add_force(1,4)
         graph1.add_force(2,6)
         graph1.add_force(4.5,4)
@@ -168,8 +186,8 @@ def openGraph():
         axs[0].add_patch(Rectangle((0,4),float(length_input.get()),2,color = 'grey'))
         axs[0].arrow(1,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
         axs[0].arrow(2,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
-        img1 = cv2.imread('Aside.png')
-        print('hi',axs)
+        #img1 = cv2.imread('Aside.png')
+        #print('hi',axs)
         #im = OffsetImage(img1,zoom=1)
         #a1 = AnnotationBbox(im,(float(left_input.get()),3),frameon=False)
         
@@ -194,13 +212,13 @@ customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
 
 window = customtkinter.CTk()
-window.geometry('500x200')
+window.geometry('600x650')
 window.title("Determinate Beam Calculator")
 #window.config(background='black')
 #window.state('zoomed')
 window.resizable(True,True)
 frame = customtkinter.CTkFrame(master=window,width=200,height=200,corner_radius=10)
-frame.pack(side=TOP)
+frame.pack(side=TOP,pady=(10,0))
 title = customtkinter.CTkLabel(frame,text="Beam Length").grid(row=0,column=0)
 length_input = customtkinter.CTkEntry(master=frame, placeholder_text = "0.0")
 length_input.grid(row=3,column=0)
