@@ -1,3 +1,4 @@
+from ast import excepthandler
 from ctypes.wintypes import RGB
 from tkinter import *
 from tkinter import messagebox
@@ -7,7 +8,6 @@ from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 import cv2
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-
 
 class Graph():
   def __init__(self, length, begin, end):
@@ -108,8 +108,41 @@ class Graph():
                 self.outputs.append(self.forces[i])
             else:
                 self.outputs.append(self.forces[i] + self.outputs[-1])
-def newForce():
-  print('new force')
+def cLoadUp():
+  global load_frame, txt1,txt2,inp1,inp2
+  load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
+  load_frame.grid(row=5,column=1)
+  txt1 = customtkinter.CTkLabel(load_frame,text="Moment Location").grid(row=0,column=0)
+  inp1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  inp1.grid(row=1,column=0)
+  txt2 = customtkinter.CTkLabel(load_frame,text="Moment Magnitude").grid(row=0,column=2)
+  inp2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addToGraph, fg_color="#D35B58", hover_color="#C77C78").grid(row=2,column=1,pady=(20,10))
+  inp2.grid(row=1,column=2)
+
+def cLoadDown():
+  print('new force2')
+def uLoadUp():
+  print('new force3')
+def uLoadDown():
+  print('new force4')
+def lLoadUp():
+  print('new force5')
+def lLoadDown():
+  print('new force6')
+def cMomentCounter():
+  print('new force7')
+def cMomentClock():
+  print('new force8')
+
+def addToGraph():
+  #try:
+  graph1.add_force(float(inp1.get()),float(inp2.get()))
+  graph1.seperators = sorted(graph1.seperators) 
+  print(graph1.seperators,graph1.forces,graph1.outputs)
+  #graph1.update_forces()
+  #except:
+  #print('error')
 # 10 2 6
 def openGraph():
     global length_input
@@ -118,6 +151,7 @@ def openGraph():
     #print(value_inside.get())
     try:
       # using input values for graph class
+      global graph1
       graph1 = Graph(float(length_input.get()), float(left_input.get()), float(right_input.get()))
     except:
       messagebox.showerror('Type Error', 'Error: Input values are not real numbers.')
@@ -132,31 +166,26 @@ def openGraph():
       elif float(length_input.get()) == 0:
         messagebox.showerror('Length Error', 'Error: Length of beam cannot be zero.')
       else:
-        global button1
-        global button2
-        global button3 
-        global button4
-        global button5
-        global button6
-        global button7 
-        global button8
-        button1 = customtkinter.CTkButton(master=frame,text="Concetrated Load Up", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=25,column=0,pady=(20,10))
-        button2 = customtkinter.CTkButton(master=frame,text="Concetrated Load Down", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=26,column=0,pady=(20,10))
-        button3 = customtkinter.CTkButton(master=frame,text="Uniform Load Up", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=27,column=0,pady=(20,10))
-        button4 = customtkinter.CTkButton(master=frame,text="Uniform Load Down", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=28,column=0,pady=(20,10))
-        button5 = customtkinter.CTkButton(master=frame,text="Linear Load Up", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=29,column=0,pady=(20,10))
-        button6 = customtkinter.CTkButton(master=frame,text="Linear Load Down", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=30,column=0,pady=(20,10))
-        button7 = customtkinter.CTkButton(master=frame,text="Concetrated Moment CCW", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=31,column=0,pady=(20,10))
-        button8 = customtkinter.CTkButton(master=frame,text="Concetrated Moment CCW", command=newForce, fg_color="#D35B58", hover_color="#C77C78").grid(row=32,column=0,pady=(20,10))
+        global button1,button2,button3,button4,button5,button6,button7,button8
+        buttons_frame = customtkinter.CTkFrame(frame,width=200,height=300,corner_radius=0)
+        buttons_frame.grid(row=5,column=0)
+        button1 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Load Up", command=cLoadUp, fg_color="#D35B58", hover_color="#C77C78").grid(row=0,column=0,pady=(20,10))
+        button2 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Load Down", command=cLoadDown, fg_color="#D35B58", hover_color="#C77C78").grid(row=1,column=0,pady=(20,10))
+        button3 = customtkinter.CTkButton(master=buttons_frame,text="Uniform Load Up", command=uLoadUp, fg_color="#D35B58", hover_color="#C77C78").grid(row=2,column=0,pady=(20,10))
+        button4 = customtkinter.CTkButton(master=buttons_frame,text="Uniform Load Down", command=uLoadDown, fg_color="#D35B58", hover_color="#C77C78").grid(row=3,column=0,pady=(20,10))
+        button5 = customtkinter.CTkButton(master=buttons_frame,text="Linear Load Up", command=lLoadUp, fg_color="#D35B58", hover_color="#C77C78").grid(row=4,column=0,pady=(20,10))
+        button6 = customtkinter.CTkButton(master=buttons_frame,text="Linear Load Down", command=lLoadDown, fg_color="#D35B58", hover_color="#C77C78").grid(row=5,column=0,pady=(20,10))
+        button7 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Moment CCW", command=cMomentCounter, fg_color="#D35B58", hover_color="#C77C78").grid(row=6,column=0,pady=(20,10))
+        button8 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Moment CW", command=cMomentClock, fg_color="#D35B58", hover_color="#C77C78").grid(row=7,column=0,pady=(20,10))
         print(button1)
         graph1.add_force(1,4)
-        graph1.add_force(2,6)
-        graph1.add_force(4.5,4)
-        graph1.add_force(8,10)
-        graph1.add_force(9.5,1)
-        graph1.add_bi_load(1,4,6)
+        #graph1.add_force(2,6)
+        #graph1.add_force(4.5,4)
+        #graph1.add_force(8,10)
+        #graph1.add_force(9.5,1)
+        #graph1.add_bi_load(1,4,6)
         #graph1.add_force(2.5,18)
-        graph1.add_tri_load(2,4,1,2)
+        #graph1.add_tri_load(2,4,1,2)
         #graph1.add_tri_load(3.5,4.5,2,1)
         graph1.seperators = sorted(graph1.seperators) 
         graph1.update_forces()
@@ -221,15 +250,15 @@ frame = customtkinter.CTkFrame(master=window,width=200,height=200,corner_radius=
 frame.pack(side=TOP,pady=(10,0))
 title = customtkinter.CTkLabel(frame,text="Beam Length").grid(row=0,column=0)
 length_input = customtkinter.CTkEntry(master=frame, placeholder_text = "0.0")
-length_input.grid(row=3,column=0)
-label1 = customtkinter.CTkLabel(frame,text="Left Support").grid(row=15,column=0)
+length_input.grid(row=1,column=0)
+label1 = customtkinter.CTkLabel(frame,text="Left Support").grid(row=2,column=0)
 left_input = customtkinter.CTkEntry(frame, placeholder_text = "0.0")
-left_input.grid(row=16,column=0)
-label1 = customtkinter.CTkLabel(frame,text="Right Support").grid(row=15,column=2)
+left_input.grid(row=3,column=0)
+label1 = customtkinter.CTkLabel(frame,text="Right Support").grid(row=2,column=2)
 right_input = customtkinter.CTkEntry(frame, placeholder_text = "0.0")
-right_input.grid(row=16,column=2)
+right_input.grid(row=3,column=2)
 
-button = customtkinter.CTkButton(master=frame,text="Submit", command=openGraph).grid(row=20,column=1)
+button = customtkinter.CTkButton(master=frame,text="Submit", command=openGraph).grid(row=4,column=1)
 current_unit = tkinter.IntVar(value = 0)
 #current_unit = StringVar(window)
   
@@ -237,7 +266,7 @@ current_unit = tkinter.IntVar(value = 0)
 #current_unit.set("in")
 options = ["in", "ft", "m", "mm"]
 options_frame = customtkinter.CTkFrame(frame,width=100,height=30,corner_radius=0)
-options_frame.grid(row=3,column=1)
+options_frame.grid(row=1,column=1)
 option1 = customtkinter.CTkRadioButton(options_frame,text="in",command=switch_unit, variable= current_unit, value=0).grid(row=0,column=0,padx=10)
 option2 = customtkinter.CTkRadioButton(options_frame,text="ft",command=switch_unit, variable= current_unit, value=1).grid(row=0,column=1,padx=10)
 option3 = customtkinter.CTkRadioButton(options_frame,text="m",command=switch_unit, variable= current_unit, value=2).grid(row=0,column=2,padx=10)
