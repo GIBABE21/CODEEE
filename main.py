@@ -1,5 +1,4 @@
-from ast import excepthandler
-from ctypes.wintypes import RGB
+import os
 from tkinter import *
 from tkinter import messagebox
 import tkinter
@@ -8,6 +7,10 @@ from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 import cv2
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+
+script_dir = os.path.dirname(__file__)
+img1_path = "img/aside.png"
+img2_path = "img/bside.png"
 
 class Graph():
   def __init__(self, length, begin, end):
@@ -108,6 +111,7 @@ class Graph():
                 self.outputs.append(self.forces[i])
             else:
                 self.outputs.append(self.forces[i] + self.outputs[-1])
+addmultiplier = 1
 def cLoadUp():
   global load_frame, txt1,txt2,inp1,inp2
   load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
@@ -117,15 +121,19 @@ def cLoadUp():
   inp1.grid(row=1,column=0)
   txt2 = customtkinter.CTkLabel(load_frame,text="Moment Magnitude").grid(row=0,column=2)
   inp2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addToGraph, fg_color="#D35B58", hover_color="#C77C78").grid(row=2,column=1,pady=(20,10))
+  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addToGraph, fg_color="#119149", hover_color="#45ba78").grid(row=2,column=1,pady=(20,10))
   inp2.grid(row=1,column=2)
 
 def cLoadDown():
-  print('new force2')
+  global addmultiplier
+  addmultiplier = -1
+  cLoadUp()
+
+
 def uLoadUp():
-  print('new force3')
+  print('u load up')
 def uLoadDown():
-  print('new force4')
+  print('u load down')
 def lLoadUp():
   print('new force5')
 def lLoadDown():
@@ -137,10 +145,11 @@ def cMomentClock():
 
 def addToGraph():
   #try:
-  graph1.add_force(float(inp1.get()),float(inp2.get()))
+  graph1.add_force(float(inp1.get()),float(inp2.get())*addmultiplier)
   graph1.seperators = sorted(graph1.seperators) 
   print(graph1.seperators,graph1.forces,graph1.outputs)
-  #graph1.update_forces()
+  graph1.outputs = []
+  graph1.update_forces()
   #except:
   #print('error')
 # 10 2 6
@@ -180,9 +189,9 @@ def openGraph():
         print(button1)
         graph1.add_force(1,4)
         #graph1.add_force(2,6)
-        #graph1.add_force(4.5,4)
+        graph1.add_force(4.5,-4)
         #graph1.add_force(8,10)
-        #graph1.add_force(9.5,1)
+        graph1.add_force(9.5,1)
         #graph1.add_bi_load(1,4,6)
         #graph1.add_force(2.5,18)
         #graph1.add_tri_load(2,4,1,2)
@@ -213,16 +222,20 @@ def openGraph():
         axs[0].plot([0,float(length_input.get())],[0,10],color='gray', linestyle='None', linewidth = 3, markerfacecolor='white', markersize=5)
         axs[0].set_title('Load Diagram')
         axs[0].add_patch(Rectangle((0,4),float(length_input.get()),2,color = 'grey'))
-        axs[0].arrow(1,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
-        axs[0].arrow(2,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
-        #img1 = cv2.imread('Aside.png')
-        #print('hi',axs)
-        #im = OffsetImage(img1,zoom=1)
-        #a1 = AnnotationBbox(im,(float(left_input.get()),3),frameon=False)
+        for key,value in graph1.forces.items():
+            if value < 0:
+              axs[0].arrow(key,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
+            else:
+              axs[0].arrow(key,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
         
-        #axs[0].add_artist(a1)
-        #img1 = cv2.resize(img1,(5,5),interpolation=cv2.INTER_LINEAR)
-        #imgplot = axs[0].imshow(cv2.cvtColor(img1,cv2.COLOR_BGR2RGB))
+        img1 = cv2.imread(os.path.join(script_dir,img1_path))
+        img2 = cv2.imread(os.path.join(script_dir,img2_path))
+        im = OffsetImage(img1,zoom=1)
+        a1 = AnnotationBbox(im,(float(left_input.get()),2),frameon=False)
+        im2 = OffsetImage(img2,zoom=1)
+        a2 = AnnotationBbox(im2,(float(right_input.get())+0.05,2),frameon=False)
+        axs[0].add_artist(a1)
+        axs[0].add_artist(a2)
         axs[1].plot(x, y, color='gray', linestyle='solid', linewidth = 3,
            marker='o', markerfacecolor='blue', markersize=5)
         for i, j in zip(x, y):
@@ -260,7 +273,6 @@ right_input.grid(row=3,column=2)
 
 button = customtkinter.CTkButton(master=frame,text="Submit", command=openGraph).grid(row=4,column=1)
 current_unit = tkinter.IntVar(value = 0)
-#current_unit = StringVar(window)
   
 # Set the default value of the variable
 #current_unit.set("in")
