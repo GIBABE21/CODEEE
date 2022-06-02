@@ -107,6 +107,8 @@ class Graph():
               #self.outputs.append(ay)
               self.outputs.append(self.ay)
         else:
+            print(self.forces, 'lol')
+            print(i,'lol')
             if len(self.outputs) == 0:
                 self.outputs.append(self.forces[i])
             else:
@@ -145,10 +147,10 @@ def cMomentClock():
 
 def addToGraph():
   #try:
+  graph1.outputs = []
   graph1.add_force(float(inp1.get()),float(inp2.get())*addmultiplier)
   graph1.seperators = sorted(graph1.seperators) 
   print(graph1.seperators,graph1.forces,graph1.outputs)
-  graph1.outputs = []
   graph1.update_forces()
   #except:
   #print('error')
@@ -187,11 +189,12 @@ def openGraph():
         button7 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Moment CCW", command=cMomentCounter, fg_color="#D35B58", hover_color="#C77C78").grid(row=6,column=0,pady=(20,10))
         button8 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Moment CW", command=cMomentClock, fg_color="#D35B58", hover_color="#C77C78").grid(row=7,column=0,pady=(20,10))
         print(button1)
-        graph1.add_force(1,4)
+        #graph1.add_force(0,0)
+        #graph1.add_force(1,4)
         #graph1.add_force(2,6)
-        graph1.add_force(4.5,-4)
+        #graph1.add_force(4.5,-4)
         #graph1.add_force(8,10)
-        graph1.add_force(9.5,1)
+        #graph1.add_force(9.5,1)
         #graph1.add_bi_load(1,4,6)
         #graph1.add_force(2.5,18)
         #graph1.add_tri_load(2,4,1,2)
@@ -200,7 +203,8 @@ def openGraph():
         graph1.update_forces()
 
         # duplicating x for the graph
-        x = graph1.seperators
+        x = list()
+        x += graph1.seperators
         x += graph1.seperators
         x.append(0)
         x.append(float(length_input.get()))
@@ -227,7 +231,7 @@ def openGraph():
               axs[0].arrow(key,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
             else:
               axs[0].arrow(key,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
-        
+        print(graph1.seperators,'bruh')
         img1 = cv2.imread(os.path.join(script_dir,img1_path))
         img2 = cv2.imread(os.path.join(script_dir,img2_path))
         im = OffsetImage(img1,zoom=1)
@@ -247,6 +251,7 @@ def openGraph():
         plt.tight_layout()
         # function to show the plot
         plt.show()
+        
 # function used to switch between radio buttons and edit the current_unit variable
 def switch_unit():
   print("toggled to ", current_unit.get())
