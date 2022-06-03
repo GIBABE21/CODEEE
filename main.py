@@ -23,6 +23,8 @@ class Graph():
       self.outputs = []
       self.begin = begin
       self.end = end
+      self.ay_total = 0
+      self.by_total = 0
       self.ay = 0
       self.by = 0
   # adding force to a dictionary as a key:value pair being location:value
@@ -63,20 +65,29 @@ class Graph():
       self.moments[location] = value
       self.seperators.append(location)
   # goes through all the forces and returns outputs that are used to display the middle graph
-  
+
+  def update_moments(self):
+    for k,v in self.moments.items():
+      self.ay_total += v
+      self.by_total += v
+
   def update_forces(self):
     for i in self.seperators:
         if i == self.begin:
             #ay = 0
-            total = 0
+            #total = 0
             jump = 0
             for k,v in self.forces.items():
                 if self.end - k < 0:
-                    total += v * (abs(self.end - k))
+                    #total += v * (abs(self.end - k))
+                    self.ay_total += v * (abs(self.end - k))
                 else:
-                    total -= v * (self.end - k)
+                    #total -= v * (self.end - k)
+                    self.ay_total -= v * (self.end - k)
             #ay = (total / (self.end - self.begin))
-            self.ay = (total / (self.end - self.begin))
+            #self.ay = (total / (self.end - self.begin))
+            self.ay = (self.ay_total / (self.end - self.begin))
+            print("AY HERE:")
             print(self.ay)
             #print(ay)
             if len(self.outputs) > 0:
@@ -88,15 +99,19 @@ class Graph():
               self.outputs.append(self.ay)
         elif i == self.end:
             #by = 0
-            total = 0
+            #total = 0
             jump = 0
             for k,v in self.forces.items():
                 if self.begin - k < 0:
-                    total -= v * (abs(self.begin - k))
+                    #total -= v * (abs(self.begin - k))
+                    self.by_total -= v * (abs(self.begin - k))
                 else:
-                    total += v * (self.begin - k)
+                    #total += v * (self.begin - k)
+                    self.by_total += v * (self.begin - k)
             #by = (total / (self.end - self.begin))
-            self.by = (total / (self.end - self.begin))
+            #self.by = (total / (self.end - self.begin))
+            self.by = (self.by_total / (self.end - self.begin))
+            print("BY HERE:")
             print(self.by)
             #print(by)
             if len(self.outputs) > 0:
@@ -199,7 +214,9 @@ def openGraph():
         #graph1.add_force(2.5,18)
         #graph1.add_tri_load(2,4,1,2)
         #graph1.add_tri_load(3.5,4.5,2,1)
+        graph1.add_moment(2,1)
         graph1.seperators = sorted(graph1.seperators) 
+        graph1.update_moments()
         graph1.update_forces()
 
         # duplicating x for the graph
