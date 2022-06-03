@@ -23,8 +23,9 @@ class Graph():
       self.outputs = []
       self.begin = begin
       self.end = end
-      self.ay_total = 0
-      self.by_total = 0
+      #self.ay_total = 0
+      #self.by_total = 0
+      self.total = 0
       self.ay = 0
       self.by = 0
   # adding force to a dictionary as a key:value pair being location:value
@@ -68,8 +69,9 @@ class Graph():
 
   def update_moments(self):
     for k,v in self.moments.items():
-      self.ay_total += v
-      self.by_total += v
+      #self.ay_total += v
+      #self.by_total += v
+      self.total +=v
 
   def update_forces(self):
     for i in self.seperators:
@@ -80,13 +82,16 @@ class Graph():
             for k,v in self.forces.items():
                 if self.end - k < 0:
                     #total += v * (abs(self.end - k))
-                    self.ay_total += v * (abs(self.end - k))
+                    #self.ay_total += v * (abs(self.end - k))
+                    self.total += v * (abs(self.end - k))
                 else:
                     #total -= v * (self.end - k)
-                    self.ay_total -= v * (self.end - k)
+                    #self.ay_total -= v * (self.end - k)
+                    self.total -= v * (self.end - k)
             #ay = (total / (self.end - self.begin))
             #self.ay = (total / (self.end - self.begin))
-            self.ay = (self.ay_total / (self.end - self.begin))
+            #self.ay = (self.ay_total / (self.end - self.begin))
+            self.ay = (self.total / (self.end - self.begin))
             print("AY HERE:")
             print(self.ay)
             #print(ay)
@@ -104,13 +109,16 @@ class Graph():
             for k,v in self.forces.items():
                 if self.begin - k < 0:
                     #total -= v * (abs(self.begin - k))
-                    self.by_total -= v * (abs(self.begin - k))
+                    #self.by_total -= v * (abs(self.begin - k))
+                    self.total -= v * (abs(self.begin - k))
                 else:
                     #total += v * (self.begin - k)
-                    self.by_total += v * (self.begin - k)
+                    #self.by_total += v * (self.begin - k)
+                    self.total += v * (self.begin - k)
             #by = (total / (self.end - self.begin))
             #self.by = (total / (self.end - self.begin))
-            self.by = (self.by_total / (self.end - self.begin))
+            #self.by = (self.by_total / (self.end - self.begin))
+            self.by = (self.total / (self.end - self.begin))
             print("BY HERE:")
             print(self.by)
             #print(by)
