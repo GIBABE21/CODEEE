@@ -7,12 +7,12 @@ from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 import cv2
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-from sympy import false, true
+from pygame import GL_BLUE_SIZE
 
 script_dir = os.path.dirname(__file__)
 img1_path = "img/aside.png"
 img2_path = "img/bside.png"
-
+addmultiplier = 1
 class Graph():
   def __init__(self, length, begin, end):
       self.length = length
@@ -24,8 +24,6 @@ class Graph():
       self.outputs = []
       self.begin = begin
       self.end = end
-      #self.ay_total = 0
-      #self.by_total = 0
       self.total = 0
       self.ay = 0
       self.by = 0
@@ -41,24 +39,15 @@ class Graph():
       midpoint = (1 / 2) * (location1 + location2)
       #print(midpoint)
       bi_value = value * (location2 - location1)
-      #print(bi_value)
-      #self.add_force(location1, value)
-      #self.add_force(location2, value)
       self.add_force(midpoint, bi_value)
  # adding an increasing/decreasing distributed load
   def add_tri_load(self, location1, location2, value1, value2):
       midpoint = (1 / 2) * (location1 + location2)
-      #print(midpoint)
       bi_value = value1 * (location2 - location1)
-      #print(bi_value)
       self.add_force(midpoint, bi_value)
       midpoint = (2 / 3) * (location2 - location1) + location1
-      #print(midpoint)
       tri_value = (1 / 2) * (location2 - location1) * (value2 - value1)
-      #print(tri_value)
       self.add_force(midpoint, tri_value)
-      #self.add_force(location1, value1)
-      #self.add_force(location2, value2)
 
   def add_moment(self, location, value):
     if location in self.moments:
@@ -67,68 +56,41 @@ class Graph():
       self.moments[location] = value
       self.seperators.append(location)
   # goes through all the forces and returns outputs that are used to display the middle graph
-
   def update_moments(self):
     for k,v in self.moments.items():
-      #self.ay_total += v
-      #self.by_total += v
       self.total +=v
   
-
   def update_forces(self):
     for i in self.seperators:
         if i == self.begin:
-            #ay = 0
-            #total = 0
             jump = 0
             for k,v in self.forces.items():
                 if self.end - k < 0:
-                    #total += v * (abs(self.end - k))
-                    #self.ay_total += v * (abs(self.end - k))
                     self.total += v * (abs(self.end - k))
                 else:
-                    #total -= v * (self.end - k)
-                    #self.ay_total -= v * (self.end - k)
                     self.total -= v * (self.end - k)
-            #ay = (total / (self.end - self.begin))
-            #self.ay = (total / (self.end - self.begin))
-            #self.ay = (self.ay_total / (self.end - self.begin))
             self.ay = (self.total / (self.end - self.begin))
             print("AY HERE:",self.ay)
-            #print(ay)
             if len(self.outputs) > 0:
-              #jump = self.outputs[-1] + ay
               jump = self.outputs[-1] + self.ay
               self.outputs.append(jump)
             else:
-              #self.outputs.append(ay)
               self.outputs.append(self.ay)
         elif i == self.end:
-            #by = 0
-            #total = 0
+
             jump = 0
             for k,v in self.forces.items():
                 if self.begin - k < 0:
-                    #total -= v * (abs(self.begin - k))
-                    #self.by_total -= v * (abs(self.begin - k))
                     self.total -= v * (abs(self.begin - k))
                 else:
-                    #total += v * (self.begin - k)
-                    #self.by_total += v * (self.begin - k)
                     self.total += v * (self.begin - k)
-            #by = (total / (self.end - self.begin))
-            #self.by = (total / (self.end - self.begin))
-            #self.by = (self.by_total / (self.end - self.begin))
             self.by = (self.total / (self.end - self.begin))
             print("BY HERE:")
             print(self.by)
-            #print(by)
             if len(self.outputs) > 0:
-              #jump = self.outputs[-1] + by
               jump = self.outputs[-1] + self.by
               self.outputs.append(jump)
             else:
-              #self.outputs.append(ay)
               self.outputs.append(self.ay)
         else:
             print(self.forces, 'lol')
@@ -137,9 +99,11 @@ class Graph():
                 self.outputs.append(self.forces[i])
             else:
                 self.outputs.append(self.forces[i] + self.outputs[-1])
+
   def update_graph(self):
     
     global x,y,fig,axs,graph1,length_input,left_input,right_input,options,current_unit
+    # resetting the graph
     axs[0].clear()
     axs[1].clear()
     axs[2].clear()
@@ -160,8 +124,6 @@ class Graph():
         y.append(v)
         y.append(v) 
     y += [0,0]
-    #print(x)
-    #print(y)
     print('axs1 x + y : ',x,y)
     axs[1].plot(x, y, color='gray', linestyle='solid', linewidth = 3,
            marker='o', markerfacecolor='blue', markersize=5)
@@ -174,12 +136,12 @@ class Graph():
     axs[0].plot([0,float(length_input.get())],[0,10],color='gray', linestyle='None', linewidth = 3, markerfacecolor='white', markersize=5)
     axs[0].set_title('Load Diagram')
     axs[0].add_patch(Rectangle((0,4),float(length_input.get()),2,color = 'grey'))
+    # arrows for each force (not including bi and tri load)
     for key,value in graph1.forces.items():
         if value < 0:
           axs[0].arrow(key,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
         else:
           axs[0].arrow(key,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
-    #print(graph1.seperators,'bruh')
     img1 = cv2.imread(os.path.join(script_dir,img1_path))
     img2 = cv2.imread(os.path.join(script_dir,img2_path))
     im = OffsetImage(img1,zoom=1)
@@ -196,123 +158,140 @@ class Graph():
     axs[1].set_xlabel('Location ('+options[current_unit.get()]+')')
     axs[1].set_ylabel('Force')
     plt.show()
-addmultiplier = 1
+
+def addForce():
+  try:
+    global loc1,loc2,mag1,mag2
+    graph1.outputs = []
+    if mag2 == 0 and loc2 == 0: 
+      graph1.add_force(float(loc1.get()),float(mag1.get())*addmultiplier)
+    elif mag2 == 0:
+      graph1.add_bi_load(float(loc1.get()), float(loc2.get()), float(mag1.get())*addmultiplier)
+    else:
+      graph1.add_tri_load(float(loc1.get()), float(loc2.get()), float(mag1.get())*addmultiplier,float(mag2.get())*addmultiplier)
+    graph1.update_graph()
+  except:
+    print('Something went wrong when adding a Force...')
+
+def addMoment():
+  try:
+    global loc1,mag1
+    graph1.add_moment(float(loc1.get()),float(mag1.get())*addmultiplier)
+  except:
+    print('Something went wrong when adding a Moment...')
+
 def cLoad():
-  global c_location,c_mag
+  global loc1,mag1
   load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
   load_frame.grid(row=5,column=1)
-  txt1 = customtkinter.CTkLabel(load_frame,text="Moment Location").grid(row=0,column=0)
-  c_location = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  c_location.grid(row=1,column=0)
-  txt2 = customtkinter.CTkLabel(load_frame,text="Moment Magnitude").grid(row=0,column=2)
-  c_mag = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addCForce, fg_color="#119149", hover_color="#45ba78").grid(row=2,column=1,pady=(20,10))
-  c_mag.grid(row=1,column=2)
+  txt1 = customtkinter.CTkLabel(load_frame,text="Load Location").grid(row=0,column=0)
+  loc1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  loc1.grid(row=1,column=0)
+  txt2 = customtkinter.CTkLabel(load_frame,text="Load Magnitude").grid(row=0,column=2)
+  mag1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addForce, fg_color="#119149", hover_color="#45ba78").grid(row=2,column=1,pady=(20,10))
+  mag1.grid(row=1,column=2)
 
 def uLoad():
-  global u_location1, u_location2, u_mag
+  global loc1,loc2,mag1
   load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
   load_frame.grid(row=5,column=1)
-  txt1 = customtkinter.CTkLabel(load_frame,text="Moment Start Location").grid(row=0,column=0)
-  u_location1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  u_location1.grid(row=1,column=0)
-  txt2 = customtkinter.CTkLabel(load_frame,text="Moment End Location").grid(row=0,column=2)
-  u_location2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  u_location2.grid(row=1,column=2)
-  txt3 = customtkinter.CTkLabel(load_frame,text="Moment Magnitude").grid(row=2,column=1)
-  u_mag = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  u_mag.grid(row=3,column=1)
-  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addUForce, fg_color="#119149", hover_color="#45ba78").grid(row=4,column=1,pady=(20,10))
+  txt1 = customtkinter.CTkLabel(load_frame,text="Load Start Location").grid(row=0,column=0)
+  loc1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  loc1.grid(row=1,column=0)
+  txt2 = customtkinter.CTkLabel(load_frame,text="Load End Location").grid(row=0,column=2)
+  loc2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  loc2.grid(row=1,column=2)
+  txt3 = customtkinter.CTkLabel(load_frame,text="Load Magnitude").grid(row=2,column=1)
+  mag1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  mag1.grid(row=3,column=1)
+  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addForce, fg_color="#119149", hover_color="#45ba78").grid(row=4,column=1,pady=(20,10))
 
 def lLoad():
-  print('hi')
-  global l_location1, l_location2, l_mag1, l_mag2
+  global loc1,loc2,mag1,mag2
   load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
   load_frame.grid(row=5,column=1)
-  txt1 = customtkinter.CTkLabel(load_frame,text="Moment Start Location").grid(row=0,column=0)
-  l_location1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  l_location1.grid(row=1,column=0)
-  txt2 = customtkinter.CTkLabel(load_frame,text="Moment End Location").grid(row=0,column=2)
-  l_location2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  l_location2.grid(row=1,column=2)
-  txt3 = customtkinter.CTkLabel(load_frame,text="Moment Start Magnitude").grid(row=2,column=0)
-  l_mag1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  l_mag1.grid(row=3,column=0)
-  txt4 = customtkinter.CTkLabel(load_frame,text="Moment End Magnitude").grid(row=2,column=2)
-  l_mag2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  l_mag2.grid(row=3,column=2)
-  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addLForce, fg_color="#119149", hover_color="#45ba78").grid(row=4,column=1,pady=(20,10))
+  txt1 = customtkinter.CTkLabel(load_frame,text="Load Start Location").grid(row=0,column=0)
+  loc1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  loc1.grid(row=1,column=0)
+  txt2 = customtkinter.CTkLabel(load_frame,text="Load End Location").grid(row=0,column=2)
+  loc2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  loc2.grid(row=1,column=2)
+  txt3 = customtkinter.CTkLabel(load_frame,text="Load Start Magnitude").grid(row=2,column=0)
+  mag1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  mag1.grid(row=3,column=0)
+  txt4 = customtkinter.CTkLabel(load_frame,text="Load End Magnitude").grid(row=2,column=2)
+  mag2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  mag2.grid(row=3,column=2)
+  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addForce, fg_color="#119149", hover_color="#45ba78").grid(row=4,column=1,pady=(20,10))
 
-
+def cMoment():
+  load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
+  load_frame.grid(row=5,column=1)
+  txt1 = customtkinter.CTkLabel(load_frame,text="Load Location").grid(row=0,column=0)
+  loc1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  loc1.grid(row=1,column=0)
+  txt2 = customtkinter.CTkLabel(load_frame,text="Load Magnitude").grid(row=0,column=2)
+  mag1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addMoment, fg_color="#119149", hover_color="#45ba78").grid(row=2,column=1,pady=(20,10))
+  mag1.grid(row=1,column=2)
 
 def cLoadUp():
   global addmultiplier
   addmultiplier = 1
   cLoad()
+
 def cLoadDown():
   global addmultiplier
   addmultiplier = -1
   cLoad()
 
-
-
 def uLoadUp():
   global addmultiplier
   addmultiplier = 1
   uLoad()
+
 def uLoadDown():
   global addmultiplier
   addmultiplier = -1
   uLoad()
+
 def lLoadUp():
   global addmultiplier
   addmultiplier = 1
   lLoad()
+
 def lLoadDown():
   global addmultiplier
   addmultiplier = -1
   lLoad()
+
 def cMomentCounter():
-  print('new force7')
+  global addmultiplier
+  addmultiplier = -1
+  cMoment()
+
 def cMomentClock():
-  print('new force8')
+  global addmultiplier
+  addmultiplier = -1
+  cMoment()
+
 # initialize graph
+loc1 = 0
+loc2 = 0
+mag1 = 0
+mag2 = 0
 plt.style.use('dark_background')
+# 3 graphs with matplotlib in the same window
 fig, axs = plt.subplots(3,figsize=(12, 8))
 x = list()
 y = [0,0]
 cleared = False
-def addCForce():
-  try:
-    print("before",graph1.seperators,graph1.forces,graph1.outputs)
-    graph1.outputs = []
-    graph1.add_force(float(c_location.get()),float(c_mag.get())*addmultiplier)
 
-    graph1.update_graph()
-  except:
-    print('Something went wrong when adding a Concentrated Force...')
-# 10 2 6
-def addUForce():
-  try:
-    print("before",graph1.seperators,graph1.forces,graph1.outputs)
-    graph1.outputs = []
-    graph1.add_bi_load(float(u_location1.get()), float(u_location2.get()), float(u_mag.get())*addmultiplier)
-    graph1.update_graph()
-  except:
-    print('Something went wrong when adding a Uniform Force...')
-def addLForce():
-  try:
-    print("before",graph1.seperators,graph1.forces,graph1.outputs)
-    graph1.outputs = []
-    graph1.add_tri_load(float(l_location1.get()), float(l_location2.get()), float(l_mag1.get())*addmultiplier,float(l_mag2.get())*addmultiplier)
-    graph1.update_graph()
-  except:
-    print('Something went wrong when adding a Linear Force...')
 def openGraph():
     global length_input
     global left_input
     global right_input
-    #print(value_inside.get())
     try:
       # using input values for graph class
       global graph1
@@ -330,7 +309,6 @@ def openGraph():
       elif float(length_input.get()) == 0:
         messagebox.showerror('Length Error', 'Error: Length of beam cannot be zero.')
       else:
-        global button1,button2,button3,button4,button5,button6,button7,button8
         buttons_frame = customtkinter.CTkFrame(frame,width=200,height=300,corner_radius=0)
         buttons_frame.grid(row=5,column=0)
         button1 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Load Up", command=cLoadUp, fg_color="#D35B58", hover_color="#C77C78").grid(row=0,column=0,pady=(20,10))
@@ -341,25 +319,12 @@ def openGraph():
         button6 = customtkinter.CTkButton(master=buttons_frame,text="Linear Load Down", command=lLoadDown, fg_color="#D35B58", hover_color="#C77C78").grid(row=5,column=0,pady=(20,10))
         button7 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Moment CCW", command=cMomentCounter, fg_color="#D35B58", hover_color="#C77C78").grid(row=6,column=0,pady=(20,10))
         button8 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Moment CW", command=cMomentClock, fg_color="#D35B58", hover_color="#C77C78").grid(row=7,column=0,pady=(20,10))
-        print(button1)
-        #graph1.add_force(0,0)
-        #graph1.add_force(1,4)
-        #graph1.add_force(2,6)
-        #graph1.add_force(4.5,-4)
-        #graph1.add_force(8,10)
-        #graph1.add_force(9.5,1)
+        #graph1.add_force(3,3)
         #graph1.add_bi_load(1,4,6)
-        #graph1.add_force(2.5,18)
-        #graph1.add_tri_load(2,4,1,2)
         #graph1.add_tri_load(3.5,4.5,2,1)
         #graph1.add_moment(2,1)
         graph1.update_graph()
-        #graph1.seperators = sorted(graph1.seperators) 
         
-        
-        # 3 graphs with matplotlib in the same window
-        
-       
         # plotting the points 
         plt.tight_layout()
         # function to show the plot
@@ -374,7 +339,7 @@ customtkinter.set_default_color_theme("blue")
 window = customtkinter.CTk()
 window.geometry('600x650')
 window.title("Determinate Beam Calculator")
-#window.config(background='black')
+#window.config(background='white')
 #window.state('zoomed')
 window.resizable(True,True)
 frame = customtkinter.CTkFrame(master=window,width=200,height=200,corner_radius=10)
@@ -393,7 +358,6 @@ button = customtkinter.CTkButton(master=frame,text="Submit", command=openGraph).
 current_unit = tkinter.IntVar(value = 0)
   
 # Set the default value of the variable
-#current_unit.set("in")
 options = ["in", "ft", "m", "mm"]
 options_frame = customtkinter.CTkFrame(frame,width=100,height=30,corner_radius=0)
 options_frame.grid(row=1,column=1)
@@ -401,17 +365,8 @@ option1 = customtkinter.CTkRadioButton(options_frame,text="in",command=switch_un
 option2 = customtkinter.CTkRadioButton(options_frame,text="ft",command=switch_unit, variable= current_unit, value=1).grid(row=0,column=1,padx=10)
 option3 = customtkinter.CTkRadioButton(options_frame,text="m",command=switch_unit, variable= current_unit, value=2).grid(row=0,column=2,padx=10)
 option4 = customtkinter.CTkRadioButton(options_frame,text="mm",command=switch_unit, variable= current_unit, value=3).grid(row=0,column=3,padx=10)
-#def task():
-    
-    #print(graph1.outputs)
-#   window.after(1000, task)  # reschedule event in 2 seconds
-
-#window.after(2000, task)
-
-
 
 window.mainloop()
-# testing
 
 
 
