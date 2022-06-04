@@ -7,6 +7,7 @@ from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 import cv2
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+from sympy import false, true
 
 script_dir = os.path.dirname(__file__)
 img1_path = "img/aside.png"
@@ -72,6 +73,7 @@ class Graph():
       #self.ay_total += v
       #self.by_total += v
       self.total +=v
+  
 
   def update_forces(self):
     for i in self.seperators:
@@ -92,8 +94,7 @@ class Graph():
             #self.ay = (total / (self.end - self.begin))
             #self.ay = (self.ay_total / (self.end - self.begin))
             self.ay = (self.total / (self.end - self.begin))
-            print("AY HERE:")
-            print(self.ay)
+            print("AY HERE:",self.ay)
             #print(ay)
             if len(self.outputs) > 0:
               #jump = self.outputs[-1] + ay
@@ -136,48 +137,177 @@ class Graph():
                 self.outputs.append(self.forces[i])
             else:
                 self.outputs.append(self.forces[i] + self.outputs[-1])
+  def update_graph(self):
+    
+    global x,y,fig,axs,graph1,length_input,left_input,right_input,options,current_unit
+    axs[0].clear()
+    axs[1].clear()
+    axs[2].clear()
+    graph1.seperators = sorted(graph1.seperators)
+    x = list()
+    y = [0,0]
+    self.update_forces()
+    self.update_moments()
+    x += graph1.seperators
+    x += graph1.seperators
+    x.append(0)
+    x.append(float(length_input.get()))
+    x = sorted(x)
+    # duplicating y for the graph
+    y = [0,0]
+    for i,v in enumerate(graph1.outputs):
+      if i < len(graph1.outputs)-1:
+        y.append(v)
+        y.append(v) 
+    y += [0,0]
+    #print(x)
+    #print(y)
+    print('axs1 x + y : ',x,y)
+    axs[1].plot(x, y, color='gray', linestyle='solid', linewidth = 3,
+           marker='o', markerfacecolor='blue', markersize=5)
+    for i, j in zip(x, y):
+      axs[1].text(i, j+0.5, str(round(j,2)))
+
+    print("after",graph1.seperators,graph1.forces,graph1.outputs)
+    fig.suptitle('')
+    axs[0].axes.yaxis.set_visible(False)
+    axs[0].plot([0,float(length_input.get())],[0,10],color='gray', linestyle='None', linewidth = 3, markerfacecolor='white', markersize=5)
+    axs[0].set_title('Load Diagram')
+    axs[0].add_patch(Rectangle((0,4),float(length_input.get()),2,color = 'grey'))
+    for key,value in graph1.forces.items():
+        if value < 0:
+          axs[0].arrow(key,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
+        else:
+          axs[0].arrow(key,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
+    #print(graph1.seperators,'bruh')
+    img1 = cv2.imread(os.path.join(script_dir,img1_path))
+    img2 = cv2.imread(os.path.join(script_dir,img2_path))
+    im = OffsetImage(img1,zoom=1)
+    a1 = AnnotationBbox(im,(float(left_input.get()),2),frameon=False)
+    im2 = OffsetImage(img2,zoom=1)
+    a2 = AnnotationBbox(im2,(float(right_input.get())+0.05,2),frameon=False)
+    axs[0].add_artist(a1)
+    axs[0].add_artist(a2)
+    axs[1].plot(x, y, color='gray', linestyle='solid', linewidth = 3,
+       marker='o', markerfacecolor='blue', markersize=5)
+    for i, j in zip(x, y):
+      axs[1].text(i, j+0.5, str(round(j,2)))
+    axs[1].set_title("Sheer Diagram")
+    axs[1].set_xlabel('Location ('+options[current_unit.get()]+')')
+    axs[1].set_ylabel('Force')
+    plt.show()
 addmultiplier = 1
-def cLoadUp():
-  global load_frame, txt1,txt2,inp1,inp2
+def cLoad():
+  global c_location,c_mag
   load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
   load_frame.grid(row=5,column=1)
   txt1 = customtkinter.CTkLabel(load_frame,text="Moment Location").grid(row=0,column=0)
-  inp1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  inp1.grid(row=1,column=0)
+  c_location = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  c_location.grid(row=1,column=0)
   txt2 = customtkinter.CTkLabel(load_frame,text="Moment Magnitude").grid(row=0,column=2)
-  inp2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
-  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addToGraph, fg_color="#119149", hover_color="#45ba78").grid(row=2,column=1,pady=(20,10))
-  inp2.grid(row=1,column=2)
+  c_mag = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addCForce, fg_color="#119149", hover_color="#45ba78").grid(row=2,column=1,pady=(20,10))
+  c_mag.grid(row=1,column=2)
 
+def uLoad():
+  global u_location1, u_location2, u_mag
+  load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
+  load_frame.grid(row=5,column=1)
+  txt1 = customtkinter.CTkLabel(load_frame,text="Moment Start Location").grid(row=0,column=0)
+  u_location1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  u_location1.grid(row=1,column=0)
+  txt2 = customtkinter.CTkLabel(load_frame,text="Moment End Location").grid(row=0,column=2)
+  u_location2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  u_location2.grid(row=1,column=2)
+  txt3 = customtkinter.CTkLabel(load_frame,text="Moment Magnitude").grid(row=2,column=1)
+  u_mag = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  u_mag.grid(row=3,column=1)
+  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addUForce, fg_color="#119149", hover_color="#45ba78").grid(row=4,column=1,pady=(20,10))
+
+def lLoad():
+  print('hi')
+  global l_location1, l_location2, l_mag1, l_mag2
+  load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
+  load_frame.grid(row=5,column=1)
+  txt1 = customtkinter.CTkLabel(load_frame,text="Moment Start Location").grid(row=0,column=0)
+  l_location1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  l_location1.grid(row=1,column=0)
+  txt2 = customtkinter.CTkLabel(load_frame,text="Moment End Location").grid(row=0,column=2)
+  l_location2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  l_location2.grid(row=1,column=2)
+  txt3 = customtkinter.CTkLabel(load_frame,text="Moment Start Magnitude").grid(row=2,column=0)
+  l_mag1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  l_mag1.grid(row=3,column=0)
+  txt4 = customtkinter.CTkLabel(load_frame,text="Moment End Magnitude").grid(row=2,column=2)
+  l_mag2 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
+  l_mag2.grid(row=3,column=2)
+  button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addLForce, fg_color="#119149", hover_color="#45ba78").grid(row=4,column=1,pady=(20,10))
+
+
+
+def cLoadUp():
+  global addmultiplier
+  addmultiplier = 1
+  cLoad()
 def cLoadDown():
   global addmultiplier
   addmultiplier = -1
-  cLoadUp()
+  cLoad()
+
 
 
 def uLoadUp():
-  print('u load up')
+  global addmultiplier
+  addmultiplier = 1
+  uLoad()
 def uLoadDown():
-  print('u load down')
+  global addmultiplier
+  addmultiplier = -1
+  uLoad()
 def lLoadUp():
-  print('new force5')
+  global addmultiplier
+  addmultiplier = 1
+  lLoad()
 def lLoadDown():
-  print('new force6')
+  global addmultiplier
+  addmultiplier = -1
+  lLoad()
 def cMomentCounter():
   print('new force7')
 def cMomentClock():
   print('new force8')
+# initialize graph
+plt.style.use('dark_background')
+fig, axs = plt.subplots(3,figsize=(12, 8))
+x = list()
+y = [0,0]
+cleared = False
+def addCForce():
+  try:
+    print("before",graph1.seperators,graph1.forces,graph1.outputs)
+    graph1.outputs = []
+    graph1.add_force(float(c_location.get()),float(c_mag.get())*addmultiplier)
 
-def addToGraph():
-  #try:
-  graph1.outputs = []
-  graph1.add_force(float(inp1.get()),float(inp2.get())*addmultiplier)
-  graph1.seperators = sorted(graph1.seperators) 
-  print(graph1.seperators,graph1.forces,graph1.outputs)
-  graph1.update_forces()
-  #except:
-  #print('error')
+    graph1.update_graph()
+  except:
+    print('Something went wrong when adding a Concentrated Force...')
 # 10 2 6
+def addUForce():
+  try:
+    print("before",graph1.seperators,graph1.forces,graph1.outputs)
+    graph1.outputs = []
+    graph1.add_bi_load(float(u_location1.get()), float(u_location2.get()), float(u_mag.get())*addmultiplier)
+    graph1.update_graph()
+  except:
+    print('Something went wrong when adding a Uniform Force...')
+def addLForce():
+  try:
+    print("before",graph1.seperators,graph1.forces,graph1.outputs)
+    graph1.outputs = []
+    graph1.add_tri_load(float(l_location1.get()), float(l_location2.get()), float(l_mag1.get())*addmultiplier,float(l_mag2.get())*addmultiplier)
+    graph1.update_graph()
+  except:
+    print('Something went wrong when adding a Linear Force...')
 def openGraph():
     global length_input
     global left_input
@@ -222,56 +352,14 @@ def openGraph():
         #graph1.add_force(2.5,18)
         #graph1.add_tri_load(2,4,1,2)
         #graph1.add_tri_load(3.5,4.5,2,1)
-        graph1.add_moment(2,1)
-        graph1.seperators = sorted(graph1.seperators) 
-        graph1.update_moments()
-        graph1.update_forces()
-
-        # duplicating x for the graph
-        x = list()
-        x += graph1.seperators
-        x += graph1.seperators
-        x.append(0)
-        x.append(float(length_input.get()))
-        x = sorted(x)
-        # duplicating y for the graph
-        y = [0,0]
-        for i,v in enumerate(graph1.outputs):
-          if i < len(graph1.outputs)-1:
-            y.append(v)
-            y.append(v) 
-        y += [0,0]
-        print(x)
-        print(y)
-        plt.style.use('dark_background')
+        #graph1.add_moment(2,1)
+        graph1.update_graph()
+        #graph1.seperators = sorted(graph1.seperators) 
+        
+        
         # 3 graphs with matplotlib in the same window
-        fig, axs = plt.subplots(3,figsize=(12, 8))
-        fig.suptitle('')
-        axs[0].axes.yaxis.set_visible(False)
-        axs[0].plot([0,float(length_input.get())],[0,10],color='gray', linestyle='None', linewidth = 3, markerfacecolor='white', markersize=5)
-        axs[0].set_title('Load Diagram')
-        axs[0].add_patch(Rectangle((0,4),float(length_input.get()),2,color = 'grey'))
-        for key,value in graph1.forces.items():
-            if value < 0:
-              axs[0].arrow(key,10,0,-4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
-            else:
-              axs[0].arrow(key,6,0,4,head_width = 0.1,head_length = 0.3,width = 0.05,color='blue')
-        print(graph1.seperators,'bruh')
-        img1 = cv2.imread(os.path.join(script_dir,img1_path))
-        img2 = cv2.imread(os.path.join(script_dir,img2_path))
-        im = OffsetImage(img1,zoom=1)
-        a1 = AnnotationBbox(im,(float(left_input.get()),2),frameon=False)
-        im2 = OffsetImage(img2,zoom=1)
-        a2 = AnnotationBbox(im2,(float(right_input.get())+0.05,2),frameon=False)
-        axs[0].add_artist(a1)
-        axs[0].add_artist(a2)
-        axs[1].plot(x, y, color='gray', linestyle='solid', linewidth = 3,
-           marker='o', markerfacecolor='blue', markersize=5)
-        for i, j in zip(x, y):
-          axs[1].text(i, j+0.5, str(round(j,2)))
-        axs[1].set_title("Sheer Diagram")
-        axs[1].set_xlabel('Location ('+options[current_unit.get()]+')')
-        axs[1].set_ylabel('Force')
+        
+       
         # plotting the points 
         plt.tight_layout()
         # function to show the plot
