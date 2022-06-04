@@ -7,7 +7,6 @@ from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 import cv2
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-from pygame import GL_BLUE_SIZE
 
 script_dir = os.path.dirname(__file__)
 img1_path = "img/aside.png"
