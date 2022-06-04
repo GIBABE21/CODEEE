@@ -182,7 +182,7 @@ def addMoment():
 def cLoad():
   global loc1,mag1
   load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
-  load_frame.grid(row=5,column=1)
+  load_frame.grid(row=5,column=1,sticky=N, padx=(10,0), pady=(10,0))
   txt1 = customtkinter.CTkLabel(load_frame,text="Load Location").grid(row=0,column=0)
   loc1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
   loc1.grid(row=1,column=0)
@@ -194,7 +194,7 @@ def cLoad():
 def uLoad():
   global loc1,loc2,mag1
   load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
-  load_frame.grid(row=5,column=1)
+  load_frame.grid(row=5,column=1,sticky=N, padx=(10,0), pady=(10,0))
   txt1 = customtkinter.CTkLabel(load_frame,text="Load Start Location").grid(row=0,column=0)
   loc1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
   loc1.grid(row=1,column=0)
@@ -209,7 +209,7 @@ def uLoad():
 def lLoad():
   global loc1,loc2,mag1,mag2
   load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
-  load_frame.grid(row=5,column=1)
+  load_frame.grid(row=5,column=1,sticky=N, padx=(10,0), pady=(10,0))
   txt1 = customtkinter.CTkLabel(load_frame,text="Load Start Location").grid(row=0,column=0)
   loc1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
   loc1.grid(row=1,column=0)
@@ -226,7 +226,7 @@ def lLoad():
 
 def cMoment():
   load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
-  load_frame.grid(row=5,column=1)
+  load_frame.grid(row=5,column=1,sticky=N, padx=(10,0), pady=(10,0))
   txt1 = customtkinter.CTkLabel(load_frame,text="Load Location").grid(row=0,column=0)
   loc1 = customtkinter.CTkEntry(load_frame, placeholder_text = "0.0")
   loc1.grid(row=1,column=0)
