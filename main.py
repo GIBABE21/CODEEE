@@ -47,7 +47,7 @@ class Graph():
       midpoint = (2 / 3) * (location2 - location1) + location1
       tri_value = (1 / 2) * (location2 - location1) * (value2 - value1)
       self.add_force(midpoint, tri_value)
-
+  
   def add_moment(self, location, value):
     if location in self.moments:
       self.moments[location] += value
@@ -58,6 +58,7 @@ class Graph():
   def update_moments(self):
     for k,v in self.moments.items():
       self.total +=v
+      print("TOTAL HERE (moments):", self.total)
   
   def update_forces(self):
     for i in self.seperators:
@@ -68,6 +69,7 @@ class Graph():
                     self.total += v * (abs(self.end - k))
                 else:
                     self.total -= v * (self.end - k)
+            print("TOTAL HERE (ay):", self.total)
             self.ay = (self.total / (self.end - self.begin))
             print("AY HERE:",self.ay)
             if len(self.outputs) > 0:
@@ -80,14 +82,15 @@ class Graph():
             jump = 0
             for k,v in self.forces.items():
                 if self.begin - k < 0:
-                    self.total -= v * (abs(self.begin - k))
+                    self.total += v * (abs(self.begin - k))
                 else:
-                    self.total += v * (self.begin - k)
+                    self.total -= v * (self.begin - k)
             self.by = (self.total / (self.end - self.begin))
-            print("BY HERE:")
-            print(self.by)
+            print("TOTAL HERE (by):", self.total)
+            print("BY HERE:", self.by)
             if len(self.outputs) > 0:
               jump = self.outputs[-1] + self.by
+              print("JUMP HERE:", jump)
               self.outputs.append(jump)
             else:
               self.outputs.append(self.ay)
@@ -109,8 +112,8 @@ class Graph():
     graph1.seperators = sorted(graph1.seperators)
     x = list()
     y = [0,0]
-    self.update_forces()
     self.update_moments()
+    self.update_forces()
     x += graph1.seperators
     x += graph1.seperators
     x.append(0)
@@ -321,7 +324,8 @@ def openGraph():
         #graph1.add_force(3,3)
         #graph1.add_bi_load(1,4,6)
         #graph1.add_tri_load(3.5,4.5,2,1)
-        #graph1.add_moment(2,1)
+        graph1.add_moment(2,1)
+        #graph1.add_moment(3,2)
         graph1.update_graph()
         
         # plotting the points 
