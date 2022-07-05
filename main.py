@@ -12,6 +12,11 @@ script_dir = os.path.dirname(__file__)
 img1_path = "img/aside.png"
 img2_path = "img/bside.png"
 addmultiplier = 1
+# initialize graph
+loc1 = 0
+loc2 = 0
+mag1 = 0
+mag2 = 0
 class Graph():
   def __init__(self, length, begin, end):
       self.length = length
@@ -183,11 +188,13 @@ def addForce():
     print('Something went wrong when adding a Force...')
 
 def addMoment():
-  try:
+  #try:
     global loc1,mag1
+    
     graph1.add_moment(float(loc1.get()),float(mag1.get())*addmultiplier)
-  except:
-    print('Something went wrong when adding a Moment...')
+    print(mag1,loc1,'lmao')
+  #except:
+    #print('Something went wrong when adding a Moment...')
 
 def cLoad():
   global loc1,mag1
@@ -235,6 +242,7 @@ def lLoad():
   button1 = customtkinter.CTkButton(master=load_frame,text="Add To Graph", command=addForce, fg_color="#119149", hover_color="#45ba78").grid(row=4,column=1,pady=(20,10))
 
 def cMoment():
+  global loc1,mag1
   load_frame = customtkinter.CTkFrame(frame,width=200,height=500,corner_radius=5)
   load_frame.grid(row=5,column=1,sticky=N, padx=(10,0), pady=(10,0))
   txt1 = customtkinter.CTkLabel(load_frame,text="Load Location").grid(row=0,column=0)
@@ -277,7 +285,7 @@ def lLoadDown():
 
 def cMomentCounter():
   global addmultiplier
-  addmultiplier = -1
+  addmultiplier = 1
   cMoment()
 
 def cMomentClock():
@@ -285,11 +293,7 @@ def cMomentClock():
   addmultiplier = -1
   cMoment()
 
-# initialize graph
-loc1 = 0
-loc2 = 0
-mag1 = 0
-mag2 = 0
+
 plt.style.use('dark_background')
 # 3 graphs with matplotlib in the same window
 fig, axs = plt.subplots(3,figsize=(12, 8))
@@ -320,14 +324,14 @@ def openGraph():
       else:
         buttons_frame = customtkinter.CTkFrame(frame,width=200,height=300,corner_radius=0)
         buttons_frame.grid(row=5,column=0)
-        button1 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Load Up", command=cLoadUp, fg_color="#D35B58", hover_color="#C77C78").grid(row=0,column=0,pady=(20,10))
-        button2 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Load Down", command=cLoadDown, fg_color="#D35B58", hover_color="#C77C78").grid(row=1,column=0,pady=(20,10))
+        button1 = customtkinter.CTkButton(master=buttons_frame,text="Concentrated Load Up", command=cLoadUp, fg_color="#D35B58", hover_color="#C77C78").grid(row=0,column=0,pady=(20,10))
+        button2 = customtkinter.CTkButton(master=buttons_frame,text="Concentrated Load Down", command=cLoadDown, fg_color="#D35B58", hover_color="#C77C78").grid(row=1,column=0,pady=(20,10))
         button3 = customtkinter.CTkButton(master=buttons_frame,text="Uniform Load Up", command=uLoadUp, fg_color="#D35B58", hover_color="#C77C78").grid(row=2,column=0,pady=(20,10))
         button4 = customtkinter.CTkButton(master=buttons_frame,text="Uniform Load Down", command=uLoadDown, fg_color="#D35B58", hover_color="#C77C78").grid(row=3,column=0,pady=(20,10))
         button5 = customtkinter.CTkButton(master=buttons_frame,text="Linear Load Up", command=lLoadUp, fg_color="#D35B58", hover_color="#C77C78").grid(row=4,column=0,pady=(20,10))
         button6 = customtkinter.CTkButton(master=buttons_frame,text="Linear Load Down", command=lLoadDown, fg_color="#D35B58", hover_color="#C77C78").grid(row=5,column=0,pady=(20,10))
-        button7 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Moment CCW", command=cMomentCounter, fg_color="#D35B58", hover_color="#C77C78").grid(row=6,column=0,pady=(20,10))
-        button8 = customtkinter.CTkButton(master=buttons_frame,text="Concetrated Moment CW", command=cMomentClock, fg_color="#D35B58", hover_color="#C77C78").grid(row=7,column=0,pady=(20,10))
+        button7 = customtkinter.CTkButton(master=buttons_frame,text="Concentrated Moment CCW", command=cMomentCounter, fg_color="#D35B58", hover_color="#C77C78").grid(row=6,column=0,pady=(20,10))
+        button8 = customtkinter.CTkButton(master=buttons_frame,text="Concentrated Moment CW", command=cMomentClock, fg_color="#D35B58", hover_color="#C77C78").grid(row=7,column=0,pady=(20,10))
         #graph1.add_force(3,3)
         #graph1.add_bi_load(1,4,6)
         #graph1.add_tri_load(3.5,4.5,2,1)
