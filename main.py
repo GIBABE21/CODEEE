@@ -113,10 +113,10 @@ class Graph():
     graph1.seperators = sorted(graph1.seperators)
     x = list()
     y = [0,0]
-    if len(self.moments) > 0:
-      self.update_moments()
-    if len(self.forces) > 0: 
-      self.update_forces()
+    #if len(self.moments) > 0:
+    self.update_moments()
+    #if len(self.forces) > 0: 
+    self.update_forces()
     x += graph1.seperators
     x += graph1.seperators
     x.append(0)
@@ -129,8 +129,8 @@ class Graph():
         y.append(v)
         y.append(v) 
     y += [0,0]
-    while len(x) > len(y):
-      y.append(0)
+    #while len(x) > len(y):
+    #  y.append(0)
     print('axs1 x + y : ',x,y)
     axs[1].plot(x, y, color='gray', linestyle='solid', linewidth = 3,
            marker='o', markerfacecolor='blue', markersize=5)
@@ -329,7 +329,7 @@ def openGraph():
         #graph1.add_force(3,3)
         #graph1.add_bi_load(1,4,6)
         #graph1.add_tri_load(3.5,4.5,2,1)
-        graph1.add_moment(2,1)
+        #graph1.add_moment(2,1)
         #graph1.add_moment(3,2)
         graph1.update_graph()
         
@@ -338,6 +338,9 @@ def openGraph():
         # function to show the plot
         plt.show()
         
+
+def show_frame(fr):
+  print("frame shown",fr)
 # function used to switch between radio buttons and edit the current_unit variable
 def switch_unit():
   print("toggled to ", current_unit.get())
@@ -350,8 +353,14 @@ window.title("Determinate Beam Calculator")
 #window.config(background='white')
 #window.state('zoomed')
 window.resizable(True,True)
+beam_frame = customtkinter.CTkFrame(master=window,width=200,height=50,corner_radius=10)
+beam_frame.grid(row=0,column=1,pady=(10,0))
+beam1 = customtkinter.CTkButton(beam_frame,text="Beam 1",command=lambda: show_frame("Beam1")).grid(row=0,column=0,padx=5)
+beam2 = customtkinter.CTkButton(beam_frame,text="Beam 2",command=lambda: show_frame("Beam2")).grid(row=0,column=1,padx=5)
+beam3 = customtkinter.CTkButton(beam_frame,text="Beam 3",command=lambda: show_frame("Beam3")).grid(row=0,column=2,padx=5)
+
 frame = customtkinter.CTkFrame(master=window,width=200,height=200,corner_radius=10)
-frame.pack(side=TOP,pady=(10,0))
+frame.grid(row=1,column=1,pady=(10,0),padx = (10,0))
 title = customtkinter.CTkLabel(frame,text="Beam Length").grid(row=0,column=0)
 length_input = customtkinter.CTkEntry(master=frame, placeholder_text = "0.0")
 length_input.grid(row=1,column=0)
