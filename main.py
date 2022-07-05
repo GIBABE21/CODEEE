@@ -4,8 +4,8 @@ from tkinter import messagebox
 import tkinter
 import customtkinter
 from matplotlib.patches import Rectangle
-import matplotlib.pyplot as plt
 import cv2
+import matplotlib.pyplot as plt
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 script_dir = os.path.dirname(__file__)
@@ -100,6 +100,7 @@ class Graph():
             if len(self.outputs) == 0:
                 self.outputs.append(self.forces[i])
             else:
+                print("test", self.forces,self.outputs)
                 self.outputs.append(self.forces[i] + self.outputs[-1])
 
   def update_graph(self):
@@ -112,8 +113,10 @@ class Graph():
     graph1.seperators = sorted(graph1.seperators)
     x = list()
     y = [0,0]
-    self.update_moments()
-    self.update_forces()
+    if len(self.moments) > 0:
+      self.update_moments()
+    if len(self.forces) > 0: 
+      self.update_forces()
     x += graph1.seperators
     x += graph1.seperators
     x.append(0)
@@ -126,6 +129,8 @@ class Graph():
         y.append(v)
         y.append(v) 
     y += [0,0]
+    while len(x) > len(y):
+      y.append(0)
     print('axs1 x + y : ',x,y)
     axs[1].plot(x, y, color='gray', linestyle='solid', linewidth = 3,
            marker='o', markerfacecolor='blue', markersize=5)
