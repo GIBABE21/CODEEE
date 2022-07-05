@@ -80,6 +80,7 @@ class Graph():
         elif i == self.end:
 
             jump = 0
+            self.total = 0
             for k,v in self.forces.items():
                 if self.begin - k < 0:
                     self.total += v * (abs(self.begin - k))
@@ -339,14 +340,14 @@ def openGraph():
         plt.show()
         
 
-def show_frame(fr):
-  print("frame shown",fr)
+def switch_frame(fr):
+  print("toggled to ", current_frame.get())
 # function used to switch between radio buttons and edit the current_unit variable
 def switch_unit():
   print("toggled to ", current_unit.get())
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
-
+current_frame = tkinter.IntVar(value = 1)
 window = customtkinter.CTk()
 window.geometry('600x650')
 window.title("Determinate Beam Calculator")
@@ -355,9 +356,9 @@ window.title("Determinate Beam Calculator")
 window.resizable(True,True)
 beam_frame = customtkinter.CTkFrame(master=window,width=200,height=50,corner_radius=10)
 beam_frame.grid(row=0,column=1,pady=(10,0))
-beam1 = customtkinter.CTkButton(beam_frame,text="Beam 1",command=lambda: show_frame("Beam1")).grid(row=0,column=0,padx=5)
-beam2 = customtkinter.CTkButton(beam_frame,text="Beam 2",command=lambda: show_frame("Beam2")).grid(row=0,column=1,padx=5)
-beam3 = customtkinter.CTkButton(beam_frame,text="Beam 3",command=lambda: show_frame("Beam3")).grid(row=0,column=2,padx=5)
+beam1 = customtkinter.CTkRadioButton(beam_frame,text="Simply Supported",command=switch_frame, variable= current_frame, value=1).grid(row=0,column=0,padx=5)
+beam2 = customtkinter.CTkRadioButton(beam_frame,text="Cantilever Left",command=switch_frame, variable= current_frame, value=2).grid(row=0,column=1,padx=5)
+beam3 = customtkinter.CTkRadioButton(beam_frame,text="Cantilever Right",command=switch_frame, variable= current_frame, value=3).grid(row=0,column=2,padx=5)
 
 frame = customtkinter.CTkFrame(master=window,width=200,height=200,corner_radius=10)
 frame.grid(row=1,column=1,pady=(10,0),padx = (10,0))
