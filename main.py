@@ -18,6 +18,7 @@ class Graph():
       self.seperators = list()   # |____|____|  [0, 0.4,0.8,2.2,4.7,10]
       self.seperators.append(begin)
       self.seperators.append(end)
+      self.moment_seperators = list()
       self.forces = {} # location:value
       self.moments = {} # location:value
       self.outputs = []
@@ -53,7 +54,7 @@ class Graph():
       self.moments[location] += value
     else:
       self.moments[location] = value
-      self.seperators.append(location)
+      self.moment_seperators.append(location)
   # goes through all the forces and returns outputs that are used to display the middle graph
   def update_moments(self):
     for k,v in self.moments.items():
