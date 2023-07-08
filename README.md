@@ -1,3 +1,83 @@
+# Engineering Beam Calculator
+
+## Engineering Beam Calculator uses a beam and several types of force to calculate how the force distributes across the area of the beam.
+
+My friend and I decided to work on a project together, where he takes care of the Mechanical Engineering math, while I take care of the implementation of the code. Here is what this application provides:
+- Input of beam length, left and right support positions
+- Concetrated, Uniform, Linear Loads and Moments
+- Graphs showing beam display and force through the whole beam
+  
+## Here is a display of how the application requests user input and shows the graphs of beam and forces that can be added upon using buttons
+
+<p align = center>
+
+<a href="https://www.youtube.com/watch?v=7PS2pJWuoHo">View Video Demo on YouTube</a>
+
+</p>
+
+## How to download play this app
+
+A way to play this game is very simple
+
+1. Clone this project
+2. Install python and install dependencies (tkinter, matplotlib, numpy, customtkinter)
+3. Run the main.py file
+4. Try out the calculator!
+
+
+
+## Find a bug?
+
+If you found an issue or would like to submit an improvement to this project, please submit an issue using the issues tab above. If you would like to submit a PR with a fix, reference the issue you created!
+
+## Known issues
+
+None
+
+## Like this project?
+
+Please consider leaving a star and a follow!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <a name="readme-top"></a>
 
 
